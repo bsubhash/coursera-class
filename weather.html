@@ -3,35 +3,106 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Weather Widget</title>
+    <title>200x100 Weather Widget</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f0f0f0;
+        }
+        .weather-widget {
+            background: #ffffff;
+            border-radius: 10px;
+            padding: 10px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            width: 200px;
+            height: 100px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.8em;
+        }
+        .location {
+            font-weight: bold;
+            font-size: 0.9em;
+        }
+        .temperature {
+            font-size: 1.2em;
+            margin: 5px 0;
+            color: #FF9800;
+        }
+        .icon {
+            width: 25px;
+            height: 25px;
+        }
+        .time {
+            font-size: 0.7em;
+            color: gray;
+        }
+    </style>
 </head>
 <body>
-    <div id="ww_1bd3661f2c3c5" 
-        v='1.3' 
-        loc='id' 
-        a='{
-            "t":"responsive",
-            "lang":"en",
-            "sl_lpl":1,
-            "ids":[],
-            "font":"Arial",
-            "sl_ics":"one_a",
-            "sl_sot":"fahrenheit",
-            "cl_bkg":"image",
-            "cl_font":"#FFFFFF",
-            "cl_cloud":"#FFFFFF",
-            "cl_persp":"#81D4FA",
-            "cl_sun":"#FFC107",
-            "cl_moon":"#FFC107",
-            "cl_thund":"#FF5722",
-            "el_wfc":3
-        }'>
-        More forecasts: 
-        <a href="https://oneweather.org/new_york_city/30_days/" 
-           id="ww_1bd3661f2c3c5_u" 
-           target="_blank">New York weather forecast 30 days</a>
+    <div class="weather-widget">
+        <div class="location" id="location">Loading...</div>
+        <img src="https://openweathermap.org/img/wn/01d@2x.png" class="icon" id="icon" alt="Weather Icon">
+        <div class="temperature" id="temperature">-- °F</div>
+        <div class="time" id="time">--:--</div>
     </div>
-    
-    <script async src="https://app3.weatherwidget.org/js/?id=ww_1bd3661f2c3c5"></script>
+
+    <script>
+        // Your OpenWeatherMap API key
+        const apiKey = 'c2bad9c68f93c4555f933b046a37435e';
+
+        function updateTime() {
+            const now = new Date();
+            const hours = String(now.getHours()).padStart(2, '0');
+            const minutes = String(now.getMinutes()).padStart(2, '0');
+            document.getElementById('time').textContent = `${hours}:${minutes}`;
+        }
+
+        function updateWeather(lat, lon) {
+            const url = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&units=imperial&appid=${apiKey}`;
+            fetch(url)
+                .then(response => response.json())
+                .then(data => {
+                    const location = data.name;
+                    const temperature = Math.round(data.main.temp);
+                    const iconCode = data.weather[0].icon;
+                    const iconUrl = `https://openweathermap.org/img/wn/${iconCode}@2x.png`;
+
+                    document.getElementById('location').textContent = location;
+                    document.getElementById('temperature').textContent = `${temperature} °F`;
+                    document.getElementById('icon').src = iconUrl;
+                })
+                .catch(error => console.error('Error fetching weather data:', error));
+        }
+
+        function getLocation() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(position => {
+                    const lat = position.coords.latitude;
+                    const lon = position.coords.longitude;
+                    updateWeather(lat, lon);
+                }, error => {
+                    console.error('Error getting location:', error);
+                    document.getElementById('location').textContent = 'Location unavailable';
+                });
+            } else {
+                alert('Geolocation is not supported by this browser.');
+            }
+        }
+
+        // Initialize the widget
+        getLocation();
+        updateTime();
+        setInterval(updateTime, 60000); // Update time every minute
+        setInterval(getLocation, 600000); // Update weather every 10 minutes (600,000 milliseconds)
+    </script>
 </body>
 </html>
