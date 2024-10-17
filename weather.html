@@ -1,94 +1,88 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Location and Time Widget</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
-            background-color: #f0f0f0;
-        }
-        .location-widget {
-            background: #ffffff;
-            border-radius: 10px;
-            padding: 10px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-            text-align: center;
-            width: 200px;
-            height: 100px;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            align-items: center;
-            font-size: 0.8em;
-        }
-        .location {
-            font-weight: bold;
-            font-size: 0.9em;
-        }
-        .time {
-            font-size: 1.2em;
-            margin: 5px 0;
-            color: #FF9800;
-        }
-    </style>
+  <title>Location and Time Widget</title>
+  <style>
+    /* Your CSS styles will go here */
+    .widget {
+      width: 200px;
+      height: 100px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      padding: 10px;
+      box-sizing: border-box;
+      background-color: #f5f5f5;
+    }
+
+    .location, .time {
+      text-align: center;
+    }
+
+    .location p, .time p {
+      margin: 0;
+      font-size: 14px;
+    }
+
+    .location p:last-child, .time p:last-child {
+      font-size: 12px;
+      color: #999;
+    }
+  </style>
+  <script>
+    function getLocation() {
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(showPosition);
+      } else {
+        x.innerHTML = "Geolocation is not supported by this browser.";
+      }
+    }
+
+    function showPosition(position)   
+ {
+      var lat = position.coords.latitude;
+      var lng = position.coords.longitude;   
+
+
+      // Use a geocoding API (e.g., Google Maps API) to get city, state, and country
+      // Replace with your actual API key and URL
+      var url = `https://api.example.com/geocode?latlng=${lat},${lng}`;
+
+      fetch(url)
+        .then(response => response.json())
+        .then(data => {
+          document.getElementById("city").textContent = data.city;
+          document.getElementById("state").textContent = data.state;
+          document.getElementById("country").textContent   
+ = data.country;
+        })
+        .catch(error => console.error(error));
+    }
+
+    function updateTime() {
+      var now = new Date();
+      var options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+      document.getElementById("time").textContent = now.toLocaleTimeString();
+      document.getElementById("date").textContent = now.toLocaleDateString(undefined,   
+ options);
+    }
+
+    // Call functions on page load and set an interval for updates
+    getLocation();
+    updateTime();
+    setInterval(updateTime, 1000);
+  </script>
 </head>
 <body>
-    <div class="location-widget">
-        <div class="location" id="location">Getting Location...</div>
-        <div class="time" id="time">--:--</div>
+  <div class="widget">
+    <div class="location">
+      <p id="city"></p>
+      <p id="state"></p>
+      <p id="country"></p>
     </div>
-
-    <script>
-        // Your OpenWeatherMap API key
-        const apiKey = 'c2bad9c68f93c4555f933b046a37435e';
-
-        function updateTime() {
-            const now = new Date();
-            const hours = String(now.getHours()).padStart(2, '0');
-            const minutes = String(now.getMinutes()).padStart(2, '0');
-            document.getElementById('time').textContent = `${hours}:${minutes}`;
-        }
-
-        function updateLocation(lat, lon) {
-            const url = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${apiKey}`;
-            fetch(url)
-                .then(response => response.json())
-                .then(data => {
-                    const location = data.name;
-                    document.getElementById('location').textContent = location;
-                })
-                .catch(error => {
-                    console.error('Error fetching location data:', error);
-                    document.getElementById('location').textContent = 'Location unavailable';
-                });
-        }
-
-        function getLocation() {
-            if (navigator.geolocation) {
-                navigator.geolocation.getCurrentPosition(position => {
-                    const lat = position.coords.latitude;
-                    const lon = position.coords.longitude;
-                    updateLocation(lat, lon);
-                }, error => {
-                    console.error('Error getting location:', error);
-                    document.getElementById('location').textContent = 'Location unavailable';
-                });
-            } else {
-                alert('Geolocation is not supported by this browser.');
-            }
-        }
-
-        // Initialize the widget
-        getLocation();
-        updateTime();
-        setInterval(updateTime, 60000); // Update time every minute
-    </script>
+    <div class="time">
+      <p id="time"></p>
+      <p id="date"></p>
+    </div>
+  </div>
 </body>
 </html>
