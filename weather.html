@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dynamic Weather Widget</title>
+    <title>Styled Weather Widget</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -15,10 +15,10 @@
             background-color: #f0f0f0;
         }
         .weather-widget {
-            background: #fff;
-            border-radius: 5px;
-            padding: 5px;
-            box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+            background: #ffffff;
+            border-radius: 15px;
+            padding: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
             text-align: center;
             width: 200px;
             height: 100px;
@@ -26,17 +26,21 @@
             flex-direction: column;
             justify-content: space-between;
             align-items: center;
-            font-size: 0.8em;
+            font-size: 0.9em;
         }
         .location {
             font-weight: bold;
+            font-size: 0.9em;
+            margin-top: 5px;
         }
         .temperature {
-            font-size: 1.2em;
+            font-size: 1.5em;
+            margin: 5px 0;
         }
         .icon {
-            width: 30px;
-            height: 30px;
+            width: 35px;
+            height: 35px;
+            margin-bottom: 5px;
         }
         .time {
             font-size: 0.7em;
@@ -53,7 +57,7 @@
     </div>
 
     <script>
-        // Replace with your OpenWeatherMap API key
+        // Your OpenWeatherMap API key
         const apiKey = 'c2bad9c68f93c4555f933b046a37435e';
 
         function updateTime() {
@@ -71,7 +75,7 @@
                     const location = data.name;
                     const temperature = Math.round(data.main.temp);
                     const iconCode = data.weather[0].icon;
-                    const iconUrl = `https://openweathermap.org/img/wn/${iconCode}.png`;
+                    const iconUrl = `https://openweathermap.org/img/wn/${iconCode}@2x.png`;
 
                     document.getElementById('location').textContent = location;
                     document.getElementById('temperature').textContent = `${temperature} °F`;
