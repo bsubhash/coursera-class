@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Centered 1280x720 Scaled to 1920x1080</title>
+    <title>Dynamic CricClubs Viewer</title>
     <style>
         body {
             margin: 0;
@@ -11,14 +11,14 @@
             justify-content: center;
             align-items: center;
             height: 100vh;
-            background-color: #000; /* Black background to avoid tiling */
+            background-color: #000; /* Black background */
             overflow: hidden;
         }
         .container {
             width: 1280px;
             height: 720px;
-            transform-origin: center; /* Scale from the center */
-            transform: scale(1.5); /* Scale from 1280x720 to 1920x1080 */
+            transform-origin: center;
+            transform: scale(1.5); /* Scale to 1920x1080 */
             border: 2px solid #ccc;
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
         }
@@ -28,10 +28,25 @@
             border: none;
         }
     </style>
+    <script>
+        // Function to get URL parameters
+        function getQueryParam(param) {
+            const urlParams = new URLSearchParams(window.location.search);
+            return urlParams.get(param);
+        }
+
+        // Update the iframe source dynamically
+        window.onload = function () {
+            const fixtureId = getQueryParam('fixtureId') || '3494'; // Default fixtureId
+            const clubId = getQueryParam('clubId') || '95';         // Default clubId
+            const iframe = document.querySelector('iframe');
+            iframe.src = `https://cricclubs.com/live/CricClubsLive.do?fixtureId=${fixtureId}&clubId=${clubId}`;
+        };
+    </script>
 </head>
 <body>
     <div class="container">
-        <iframe src="https://cricclubs.com/live/CricClubsLive.do?fixtureId=3494&clubId=95" title="CricClubs Live"></iframe>
+        <iframe title="CricClubs Live"></iframe>
     </div>
 </body>
 </html>
