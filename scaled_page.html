@@ -37,10 +37,10 @@
 
         // Update the iframe source dynamically
         window.onload = function () {
-            const fixtureId = getQueryParam('fixtureId') || '3494'; // Default fixtureId
+            const fixtureId = getQueryParam('matchId') || '3151'; // Default fixtureId
             const clubId = getQueryParam('clubId') || '95';         // Default clubId
             const iframe = document.querySelector('iframe');
-            iframe.src = `https://cricclubs.com/live/CricClubsLive.do?fixtureId=${fixtureId}&clubId=${clubId}`;
+            iframe.src = `https://cricclubs.com/live/CricClubsLive.do?fixtureId=${matchId}&clubId=${clubId}`;
         };
     </script>
 </head>
