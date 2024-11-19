@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>1280x720 Scaled to 1920x1080</title>
+    <title>Centered 1280x720 Scaled to 1920x1080</title>
     <style>
         body {
             margin: 0;
@@ -11,20 +11,20 @@
             justify-content: center;
             align-items: center;
             height: 100vh;
-            background-color: #f0f0f0;
+            background-color: #000; /* Black background to avoid tiling */
+            overflow: hidden;
         }
         .container {
             width: 1280px;
             height: 720px;
-            overflow: hidden;
-            transform-origin: top left;
+            transform-origin: center; /* Scale from the center */
             transform: scale(1.5); /* Scale from 1280x720 to 1920x1080 */
             border: 2px solid #ccc;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
         }
         iframe {
-            width: 1280px;
-            height: 720px;
+            width: 100%;
+            height: 100%;
             border: none;
         }
     </style>
