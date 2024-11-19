@@ -3,6 +3,55 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scaled 1280x720 Page</title>
+    <style>
+        body {
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f0f0f0;
+        }
+        .container {
+            width: 1280px;
+            height: 720px;
+            overflow: hidden;
+            border: 2px solid #ccc;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            transform-origin: top left;
+        }
+        .container iframe {
+            position: absolute;
+            width: 1280px;
+            height: 720px;
+            border: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <iframe src="https://cricclubs.com/live/CricClubsLive.do?fixtureId=3494&clubId=95" title="Scaled Page"></iframe>
+    </div>
+    <script>
+        const container = document.querySelector('.container');
+        const scaleX = window.innerWidth / 1280;
+        const scaleY = window.innerHeight / 720;
+
+        // Scale container to fit the viewport
+        const scale = Math.min(scaleX, scaleY);
+        container.style.transform = `scale(${scale})`;
+    </script>
+</body>
+</html>
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Scaled Page Viewer</title>
     <style>
         body {
