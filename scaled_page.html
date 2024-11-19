@@ -3,6 +3,53 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scaled Page Viewer</title>
+    <style>
+        body {
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f0f0f0;
+        }
+        .container {
+            position: relative;
+            width: 1000px;
+            height: 1800px;
+            overflow: hidden;
+            border: 2px solid #ccc;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        }
+        .container iframe {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            transform-origin: top left;
+            transform: scale(1);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <iframe src="https://cricclubs.com/live/CricClubsLive.do?fixtureId=3494&clubId=95" title="Scaled Page"></iframe>
+    </div>
+    <script>
+        const iframe = document.querySelector("iframe");
+        const scaleX = 1280 / window.innerWidth;
+        const scaleY = 720 / window.innerHeight;
+
+        // Adjust iframe scale to fit the container
+        iframe.style.transform = `scale(${1 / Math.max(scaleX, scaleY)})`;
+    </script>
+</body>
+</html>
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Scaled 1280x720 Page</title>
     <style>
         body {
@@ -45,51 +92,3 @@
 </body>
 </html>
 
-
-
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Scaled Page Viewer</title>
-    <style>
-        body {
-            margin: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            background-color: #f0f0f0;
-        }
-        .container {
-            position: relative;
-            width: 1000px;
-            height: 1800px;
-            overflow: hidden;
-            border: 2px solid #ccc;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-        }
-        .container iframe {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            transform-origin: top left;
-            transform: scale(1);
-        }
-    </style>
-</head>
-<body>
-    <div class="container">
-        <iframe src="https://cricclubs.com/live/CricClubsLive.do?fixtureId=3494&clubId=95" title="Scaled Page"></iframe>
-    </div>
-    <script>
-        const iframe = document.querySelector("iframe");
-        const scaleX = 1000 / window.innerWidth;
-        const scaleY = 1800 / window.innerHeight;
-
-        // Adjust iframe scale to fit the container
-        iframe.style.transform = `scale(${1 / Math.max(scaleX, scaleY)})`;
-    </script>
-</body>
-</html>
