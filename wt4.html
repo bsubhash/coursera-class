@@ -85,7 +85,7 @@
                         });
 
                     // Fetch Weather
-                    const apiKey = '14d31962c93bbd59c7b96fab3aeabcb4'; // Replace with your OpenWeatherMap API key
+                    const apiKey = ''; // Replace with your OpenWeatherMap API key
                     fetch(`https://api.openweathermap.org/data/2.5/weather?lat=${latitude}&lon=${longitude}&units=metric&appid=${apiKey}`)
                         .then((response) => response.json())
                         .then((data) => {
