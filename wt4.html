@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Location and Date Widget</title>
+    <title>Location, Date, and Weather Widget</title>
     <style>
         body {
             margin: 0;
@@ -21,28 +21,41 @@
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
             display: flex;
             flex-direction: column;
-            justify-content: center;
+            justify-content: space-between;
             align-items: center;
+            padding: 10px;
             color: white;
             font-family: 'Poppins', sans-serif;
             overflow: hidden;
         }
+        .top-info, .bottom-info {
+            text-align: center;
+        }
         .location {
             font-size: 1.2rem;
             font-weight: 600;
-            text-align: center;
-            margin: 5px 0;
         }
         .date {
             font-size: 1rem;
+            font-weight: 400;
+        }
+        .weather {
+            font-size: 0.9rem;
             font-weight: 400;
         }
     </style>
 </head>
 <body>
     <div class="widget-container">
-        <div class="location" id="location">Loading Location...</div>
-        <div class="date" id="date">Loading Date...</div>
+        <div class="top-info">
+            <div class="location" id="location">Loading Location...</div>
+            <div class="date" id="date">Loading Date...</div>
+        </div>
+        <div class="bottom-info">
+            <div class="weather" id="temperature">Temperature: -- °C</div>
+            <div class="weather" id="humidity">Humidity: --%</div>
+            <div class="weather" id="wind-speed">Wind Speed: -- m/s</div>
+        </div>
     </div>
     <script>
         // Update Date
@@ -50,12 +63,18 @@
         const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
         dateElement.textContent = new Date().toLocaleDateString(undefined, options);
 
-        // Geolocation API for Location
+        // Geolocation API for Location and Weather
         const locationElement = document.getElementById('location');
+        const temperatureElement = document.getElementById('temperature');
+        const humidityElement = document.getElementById('humidity');
+        const windSpeedElement = document.getElementById('wind-speed');
+
         if ('geolocation' in navigator) {
             navigator.geolocation.getCurrentPosition(
                 (position) => {
                     const { latitude, longitude } = position.coords;
+                    
+                    // Fetch Location
                     fetch(`https://geocode.xyz/${latitude},${longitude}?geoit=json`)
                         .then((response) => response.json())
                         .then((data) => {
@@ -63,6 +82,21 @@
                         })
                         .catch(() => {
                             locationElement.textContent = 'Location Unavailable';
+                        });
+
+                    // Fetch Weather
+                    const apiKey = '14d31962c93bbd59c7b96fab3aeabcb4'; // Replace with your OpenWeatherMap API key
+                    fetch(`https://api.openweathermap.org/data/2.5/weather?lat=${latitude}&lon=${longitude}&units=metric&appid=${apiKey}`)
+                        .then((response) => response.json())
+                        .then((data) => {
+                            temperatureElement.textContent = `Temperature: ${data.main.temp.toFixed(1)} °C`;
+                            humidityElement.textContent = `Humidity: ${data.main.humidity}%`;
+                            windSpeedElement.textContent = `Wind Speed: ${data.wind.speed.toFixed(1)} m/s`;
+                        })
+                        .catch(() => {
+                            temperatureElement.textContent = 'Temperature: -- °C';
+                            humidityElement.textContent = 'Humidity: --%';
+                            windSpeedElement.textContent = 'Wind Speed: -- m/s';
                         });
                 },
                 () => {
