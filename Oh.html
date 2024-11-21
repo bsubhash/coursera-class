@@ -1,0 +1,39 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Embedded CricClubs Page - Lower Half</title>
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            width: 2800px;
+            height: 2160px;
+            background: transparent;
+        }
+        .iframe-container {
+            position: relative;
+            width: 1400px; /* Match iframe's original width */
+            height: 540px; /* Half of the iframe's height (scaled) */
+            overflow: hidden; /* Hide the upper half */
+        }
+        iframe {
+            position: absolute;
+            top: -540px; /* Move the iframe up by half of its height (scaled) */
+            left: 0;
+            width: 1400px;
+            height: 1080px;
+            transform: scale(2); /* Keep the scaling intact */
+            transform-origin: 0 0;
+            border: none;
+            background: transparent;
+        }
+    </style>
+</head>
+<body>
+    <div class="iframe-container">
+        <iframe src="https://cricclubs.com/CricClubsLive.do?fixtureId=998&clubId=1001307" allowtransparency="true"></iframe>
+    </div>
+</body>
+</html>
