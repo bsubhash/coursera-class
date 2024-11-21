@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Custom Image Layout</title>
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            width: 3840px;
+            height: 300px;
+            overflow: hidden;
+            background: transparent;
+            position: relative;
+        }
+        .image1 {
+            position: absolute;
+            top: 50px; /* Centered vertically (300px height - 200px image height) / 2 */
+            left: 200px; /* 200 pixels from the left */
+            width: 200px;
+            height: 200px;
+            object-fit: contain; /* Preserve aspect ratio */
+        }
+        .image2 {
+            position: absolute;
+            top: 50px; /* Centered vertically (300px height - 200px image height) / 2 */
+            right: 400px; /* 400 pixels from the right */
+            width: 200px;
+            height: 200px;
+            object-fit: contain; /* Preserve aspect ratio */
+        }
+    </style>
+</head>
+<body>
+    <!-- Image 1: Positioned 200px from the left -->
+    <img src="image1.png" alt="Image 1" class="image1">
+
+    <!-- Image 2: Positioned 400px from the right -->
+    <img src="image2.png" alt="Image 2" class="image2">
+</body>
+</html>
