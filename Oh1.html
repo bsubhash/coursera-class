@@ -14,17 +14,17 @@
         }
         .iframe-container {
             position: relative;
-            width: 1400px; /* Match iframe's original width */
-            height: 540px; /* Half of the iframe's height (scaled) */
+            width: 1400px; /* Match the iframe width */
+            height: 540px; /* Show only the lower half */
             overflow: hidden; /* Hide the upper half */
         }
         iframe {
             position: absolute;
-            top: -540px; /* Move the iframe up by half of its height (scaled) */
+            top: 0; /* Don't move the content inside the iframe */
             left: 0;
             width: 1400px;
             height: 1080px;
-            transform: scale(2); /* Keep the scaling intact */
+            transform: scale(2); /* Retain the scaling */
             transform-origin: 0 0;
             border: none;
             background: transparent;
