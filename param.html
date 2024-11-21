@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Embedded CricClubs Lower Half</title>
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            width: 2800px;
+            height: 1080px; /* Half the height of the original scaled page */
+            background: transparent;
+        }
+        iframe {
+            width: 1400px;
+            height: 1080px;
+            transform: scale(2);
+            transform-origin: 0 0;
+            border: none;
+            background: transparent;
+            position: absolute;
+            top: -1080px; /* Shift up to show the lower half of the page */
+        }
+    </style>
+</head>
+<body>
+    <iframe id="cricclubs-frame" allowtransparency="true"></iframe>
+    <script>
+        // Function to get URL parameters
+        function getQueryParam(param) {
+            const urlParams = new URLSearchParams(window.location.search);
+            return urlParams.get(param);
+        }
+
+        // Set fixtureId and clubId dynamically
+        const fixtureId = getQueryParam('fixtureId') || '998'; // Default value
+        const clubId = getQueryParam('clubId') || '1001307';  // Default value
+
+        // Update iframe source dynamically
+        const iframe = document.getElementById('cricclubs-frame');
+        iframe.src = `https://cricclubs.com/CricClubsLive.do?fixtureId=${fixtureId}&clubId=${clubId}`;
+    </script>
+</body>
+</html>
