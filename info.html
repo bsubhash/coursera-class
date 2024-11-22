@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Custom Image Layout</title>
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            width: 3840px;
+            height: 2160px;
+            overflow: hidden;
+            background: transparent;
+            position: relative;
+        }
+        .image1 {
+            position: absolute;
+            top: 0px;
+            left: 150px; /* 200 pixels from the left */
+            width: 350px;
+            height: 350px;
+            object-fit: contain; /* Preserve aspect ratio */
+        }
+        .image2 {
+            position: absolute;
+            top: 100px;
+            right: 150px; /* 400 pixels from the right */
+            width: 200px;
+            height: 200px;
+            object-fit: contain; /* Preserve aspect ratio */
+        }
+        .info-window {
+            position: absolute;
+            bottom: 20px; /* Keep some space from the bottom */
+            right: 20px; /* Keep some space from the right */
+            width: 520px;
+            height: 170px;
+            background-color: #002f60;
+            color: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+            font-family: 'Poppins', sans-serif;
+            padding: 10px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+        }
+        .info-location,
+        .info-date,
+        .info-time {
+            margin: 5px 0;
+        }
+        .info-location {
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+        .info-date {
+            font-size: 1rem;
+        }
+        .info-time {
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <!-- Image 1: Positioned 200px from the left -->
+    <img src="image1.png" alt="Image 1" class="image1">
+
+    <!-- Image 2: Positioned 400px from the right -->
+    <img src="sdccya.png" alt="Image 2" class="image2">
+
+    <!-- Info Window -->
+    <div class="info-window">
+        <div class="info-location" id="location">Loading Location...</div>
+        <div class="info-date" id="date">Loading Date...</div>
+        <div class="info-time" id="time">Loading Time...</div>
+    </div>
+
+    <script>
+        // Update Date and Time
+        function updateDateTime() {
+            const now = new Date();
+
+            // Format date as DD MON YYYY
+            const options = { day: '2-digit', month: 'short', year: 'numeric' };
+            document.getElementById('date').textContent = now.toLocaleDateString('en-US', options).toUpperCase();
+
+            // Format time as HH:MM:SS
+            const timeString = now.toLocaleTimeString('en-US', { hour12: false });
+            document.getElementById('time').textContent = timeString;
+        }
+
+        setInterval(updateDateTime, 1000); // Update time every second
+
+        // Fetch Location and State
+        if ('geolocation' in navigator) {
+            navigator.geolocation.getCurrentPosition(
+                (position) => {
+                    const { latitude, longitude } = position.coords;
+
+                    // Fetch location details using Geocode.xyz API
+                    fetch(`https://geocode.xyz/${latitude},${longitude}?geoit=json`)
+                        .then(response => response.json())
+                        .then(data => {
+                            const location = data.city || 'Unknown City';
+                            const state = data.state || 'Unknown State';
+                            document.getElementById('location').textContent = `${location}, ${state}`;
+                        })
+                        .catch(() => {
+                            document.getElementById('location').textContent = 'Location Unavailable';
+                        });
+                },
+                () => {
+                    document.getElementById('location').textContent = 'Location Access Denied';
+                }
+            );
+        } else {
+            document.getElementById('location').textContent = 'Geolocation Not Supported';
+        }
+
+        // Initialize date and time immediately
+        updateDateTime();
+    </script>
+</body>
+</html>
