@@ -5,6 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Custom Image Layout</title>
     <style>
+        /* Import Google Fonts */
+        @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap');
+
         body, html {
             margin: 0;
             padding: 0;
@@ -13,7 +16,9 @@
             overflow: hidden;
             background: transparent;
             position: relative;
+            font-family: 'Roboto', sans-serif; /* Use Roboto for the entire page */
         }
+
         .image1 {
             position: absolute;
             top: 0px;
@@ -22,6 +27,7 @@
             height: 350px;
             object-fit: contain; /* Preserve aspect ratio */
         }
+
         .image2 {
             position: absolute;
             top: 100px;
@@ -30,6 +36,7 @@
             height: 200px;
             object-fit: contain; /* Preserve aspect ratio */
         }
+
         .info-window {
             position: absolute;
             bottom: 20px; /* Keep some space from the bottom */
@@ -40,7 +47,7 @@
             color: white;
             border-radius: 10px;
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
-            font-family: 'Poppins', sans-serif;
+            font-family: 'Roboto', sans-serif; /* Explicitly use Roboto for the info window */
             padding: 10px;
             display: flex;
             flex-direction: column;
@@ -48,21 +55,26 @@
             align-items: center;
             text-align: center;
         }
+
         .info-location,
         .info-date,
         .info-time {
             margin: 5px 0;
         }
+
         .info-location {
-            font-size: 1.2rem;
-            font-weight: bold;
+            font-size: 1.4rem;
+            font-weight: 700; /* Bold for prominence */
         }
+
         .info-date {
-            font-size: 1rem;
+            font-size: 1.2rem;
+            font-weight: 500; /* Medium weight */
         }
+
         .info-time {
-            font-size: 1.5rem;
-            font-weight: bold;
+            font-size: 1.6rem;
+            font-weight: 700; /* Bold for better visibility */
         }
     </style>
 </head>
