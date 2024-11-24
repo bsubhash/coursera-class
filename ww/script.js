@@ -121,4 +121,5 @@ const getWeatherDetails = () => {
 };
 
 getWeatherDetails();
-setInterval(getWeatherDetails, 1000 * 60 * 5);
+//setInterval(getWeatherDetails, 1000 * 60 * 5);
+setInterval(getWeatherDetails, 1000);
