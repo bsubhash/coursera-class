@@ -1,0 +1,158 @@
+/* Weather Widgets CSS */
+@import url("https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&display=swap");
+
+.widget {
+  font-family: "Montserrat", serif;
+  position: absolute;
+  bottom: 0;
+  width: 520px;
+  height: 170px;
+  background: #001e3a;
+  color: #ffffff;
+  padding: 20px;
+  display: flex;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+.widget:before {
+  position: absolute;
+  content: "";
+  width: 100%;
+  height: 50%;
+  left: 0;
+  top: 0;
+  background: #ffffff;
+  opacity: 0.1;
+  z-index: 1;
+}
+.widget .widget-inner {
+  position: relative;
+  z-index: 2;
+  flex-grow: 1;
+}
+.widget p {
+  margin: 0;
+  padding: 0;
+}
+
+/* Date and time widget */
+.date-time-widget {
+  left: 0;
+}
+.date-time-widget .widget-inner {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+.date-time-widget .bottom-part {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.date-time-widget .date {
+  font-size: 45px;
+  font-weight: 600;
+  line-height: 1.1em;
+}
+.date-time-widget .location {
+  font-size: 30px;
+  line-height: 1.1em;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.date-time-widget .location span {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 220px;
+}
+.date-time-widget .time {
+  font-size: 64px;
+  line-height: 1.1em;
+  gap: 10px;
+  margin: -20px 0;
+  display: flex;
+  align-items: flex-end;
+  font-weight: 500;
+}
+.date-time-widget .time em {
+  font-size: 32px;
+  font-style: normal;
+  line-height: 44px;
+  font-weight: 400;
+}
+
+/* Weather widget */
+.weather-widget {
+  right: 0;
+}
+.weather-widget .widget-inner {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.weather-widget .left-part {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 10px;
+}
+.weather-widget svg path[fill] {
+  fill: #ffffff;
+}
+.weather-widget svg path[stroke] {
+  stroke: #ffffff;
+}
+.weather-widget .yellow-text svg path[fill] {
+  fill: yellow!important;
+}
+.weather-widget .yellow-text svg path[stroke] {
+  stroke: yellow!important;
+}
+.weather-widget .yellow-text {
+  color: yellow!important;
+}
+.weather-widget .red-text svg path[fill] {
+  fill: red!important;
+}
+.weather-widget .red-text svg path[stroke] {
+  stroke: red!important;
+}
+.weather-widget .red-text {
+  color: red!important;
+}
+.weather-widget #weather-conditions svg{
+  height: 50px;
+}
+.weather-widget .temp {
+  font-size: 70px;
+  line-height: 1.2em;
+  font-weight: 600;
+  margin-bottom: -20px;
+  height: 80px;
+}
+.weather-widget .right-part {
+  height: 100%;
+}
+.weather-widget ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  justify-content: space-between;
+  font-size: 28px;
+  line-height: 36px;
+}
+.weather-widget ul li {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+}
+.weather-widget ul li span {
+  font-weight: 600;
+}
