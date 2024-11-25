@@ -55,11 +55,14 @@
         function extractGPSData() {
             const gpsTag = '<% gps_coord(dd) %>';
             const [latitude, longitude] = gpsTag.split(',').map(coord => parseFloat(coord.trim()));
+            
             if (!isNaN(latitude) && !isNaN(longitude)) {
+                document.getElementById('location').textContent = `Latitude: ${latitude}, Longitude: ${longitude}`;
                 fetchLocationName(latitude, longitude);
             } else {
-                document.getElementById('location').textContent = 'Invalid GPS data';
+                document.getElementById('location').textContent = `Invalid GPS data. Parsed values: Latitude = ${latitude}, Longitude = ${longitude}`;
             }
+
         }
 
         // Periodically update the location
