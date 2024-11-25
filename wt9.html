@@ -1,0 +1,193 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Live Weather Info with Larix Broadcaster</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        .weather-info {
+            margin-top: 20px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            background-color: #f9f9f9;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Live Weather Information</h1>
+
+    <!-- Display the GPS Coordinates and Weather Info -->
+    <div id="gps-coordinates">GPS Coordinates: <span id="gps-coord">Loading...</span></div>
+    <div id="weather-info" class="weather-info">
+        <p><strong>Weather:</strong> <span id="weather-description">Loading...</span></p>
+        <p><strong>Temperature:</strong> <span id="temperature">Loading...</span> °C</p>
+        <p><strong>Altitude:</strong> <span id="altitude">Loading...</span> meters</p>
+    </div>
+
+    <script>
+        // Example of the data you might get from Larix Broadcaster
+        const gpsData = "<% gps_coord(dms) %> 40°42'51.3\"N 74°00'21.7\"W | Alt: <% gps_alt(m) %> 10 m";
+
+        // OpenWeatherMap API Key (replace with your actual key)
+        const apiKey = '14d31962c93bbd59c7b96fab3aeabcb4';
+
+        // Extract the GPS coordinates and altitude from the given gpsData string
+        function extractGpsData(gpsData) {
+            const gpsPattern = /<% gps_coord\(dms\) %> (.+?) \| Alt: <% gps_alt\(m\) %> (.+?) m/;
+            const match = gpsPattern.exec(gpsData);
+            if (match) {
+                const gpsCoords = match[1]; // Latitude and longitude in DMS format
+                const altitude = match[2];  // Altitude in meters
+                return { gpsCoords, altitude };
+            }
+            return null;
+        }
+
+        // Convert DMS (Degrees, Minutes, Seconds) to Decimal Degrees (DD)
+        function dmsToDd(dmsCoords) {
+            const dmsPattern = /(\d+)°(\d+)'([\d.]+)"([NSEW])/;
+            const match = dmsCoords.match(dmsPattern);
+            if (match) {
+                const degrees = parseInt(match[1]);
+                const minutes = parseInt(match[2]);
+                const seconds = parseFloat(match[3]);
+                const direction = match[4];
+
+                let decimal = degrees + (minutes / 60) + (seconds / 3600);
+                if (direction === 'S' || direction === 'W') {
+                    decimal = -decimal;
+                }
+                return decimal;
+            }
+            return null;
+        }
+
+        // Fetch weather data from OpenWeatherMap API based on coordinates
+        function getWeather(latitude, longitude) {
+            const weatherApiUrl = `https://api.openweathermap.org/data/2.5/weather?lat=${latitude}&lon=${longitude}&appid=${apiKey}&units=metric`;
+
+            fetch(weatherApiUrl)
+                .then(response => response.json())
+                .then(data => {
+                    const description = data.weather[0].description;
+                    const temperature = data.main.temp;
+                    const cityName = data.name;
+
+                    // Display weather information
+                    document.getElementById('weather-description').textContent = `${description} in ${cityName}`;
+                    document.getElementById('temperature').textContent = temperature;
+                })
+                .catch(error => {
+                    console.error('Error fetching weather data:', error);
+                    document.getElementById('weather-description').textContent = 'Error fetching weather data';
+                    document.getElementById('temperature').textContent = 'N/A';
+                });
+        }
+
+        // Extract and process the GPS coordinates and altitude
+        const { gpsCoords, altitude } = extractGpsData(gpsData);
+        if (gpsCoords) {
+            document.getElementById('gps-coord').textContent = gpsCoords;
+            document.getElementById('altitude').textContent = altitude;
+
+            // Convert DMS coordinates to Decimal Degrees
+            const [latDms, lonDms] = gpsCoords.split(' ');
+            const latitude = dmsToDd(latDms);
+            const longitude = dmsToDd(lonDms);
+
+            if (latitude !== null && longitude !== null) {
+                // Fetch weather information using the coordinates
+                getWeather(latitude, longitude);
+            } else {
+                document.getElementById('weather-description').textContent = 'Invalid GPS coordinates';
+                document.getElementById('temperature').textContent = 'N/A';
+            }
+        } else {
+            document.getElementById('gps-coord').textContent = 'Unable to extract GPS data';
+            document.getElementById('weather-description').textContent = 'Invalid GPS data';
+            document.getElementById('temperature').textContent = 'N/A';
+        }
+    </script>
+
+</body>
+</html>
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GPS Location Overlay</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin-top: 20%;
+            background: rgba(0, 0, 0, 0.5);
+            color: white;
+        }
+        .location {
+            font-size: 1.5em;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <h1>Live Location</h1>
+    <div class="location" id="location">Fetching location...</div>
+
+    <script>
+        // OpenWeather API key
+        const API_KEY = '14d31962c93bbd59c7b96fab3aeabcb4';
+
+        // Function to fetch the location name from OpenWeather API
+        async function fetchLocationName(latitude, longitude) {
+            try {
+                const response = await fetch(
+                    `https://api.openweathermap.org/geo/1.0/reverse?lat=${latitude}&lon=${longitude}&limit=1&appid=${API_KEY}`
+                );
+
+                if (!response.ok) {
+                    throw new Error('Failed to fetch location');
+                }
+
+                const data = await response.json();
+
+                if (data && data.length > 0) {
+                    const locationName = `${data[0].name}, ${data[0].country}`;
+                    document.getElementById('location').textContent = locationName;
+                } else {
+                    document.getElementById('location').textContent = 'Location not found';
+                }
+            } catch (error) {
+                console.error('Error fetching location:', error);
+                document.getElementById('location').textContent = 'Error fetching location';
+            }
+        }
+
+        // Function to extract GPS data from Larix tags
+        function extractGPSData() {
+            const gpsTag = '<% gps_coord(dd) %>';
+            const [latitude, longitude] = gpsTag.split(',').map(coord => parseFloat(coord.trim()));
+            
+            if (!isNaN(latitude) && !isNaN(longitude)) {
+                document.getElementById('location').textContent = `Latitude: ${latitude}, Longitude: ${longitude}`;
+                fetchLocationName(latitude, longitude);
+            } else {
+                document.getElementById('location').textContent = `Invalid GPS data. Parsed values: Latitude = ${latitude}, Longitude = ${longitude}`;
+            }
+
+        }
+
+        // Periodically update the location
+        setInterval(extractGPSData, 5000); // Update every 5 seconds
+    </script>
+</body>
+</html>
+
