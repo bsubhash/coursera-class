@@ -34,11 +34,12 @@
     function updateGPSOverlay() {
       try {
         // Call Larix's gps_coord function to get GPS coordinates
-        const gpsData = gps_coord(0, 6); // Style 0: Decimal, Digits 6 for precision
+        const gpsData = gps_coord(dd, 6); // Style 0: Decimal, Digits 6 for precision
         const [latitude, longitude] = gpsData.split(","); // GPS data is returned as "latitude,longitude"
 
         // Update the overlay with the fetched GPS coordinates
         document.getElementById("latitude").textContent = latitude;
+        document.getElementById("latitude").textContent = "45.111";
         document.getElementById("longitude").textContent = longitude;
       } catch (error) {
         console.error("Error fetching GPS data:", error);
