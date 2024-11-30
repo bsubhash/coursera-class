@@ -3,9 +3,26 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Print Tag Example</title>
+    <title>Print Tag Value</title>
 </head>
 <body>
-    <p>gps_coord(dms)</p>
+    <!-- Example of the system-provided tag -->
+    <gps_coord(dms) id="gps-data">40° 42' 46'' N, 74° 0' 21'' W</gps_coord(dms)>
+
+    <!-- Placeholder to display the tag's value -->
+    <p id="output"></p>
+
+    <script>
+        // Select the tag and extract its content
+        const gpsTag = document.querySelector('gps_coord(dms)');
+        const output = document.getElementById('output');
+
+        if (gpsTag) {
+            // Print the value of the tag
+            output.textContent = `The GPS coordinates are: ${gpsTag.textContent}`;
+        } else {
+            output.textContent = "GPS tag not found.";
+        }
+    </script>
 </body>
 </html>
