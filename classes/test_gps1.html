@@ -1,52 +1,11 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Larix GPS Overlay</title>
-  <style>
-    body {
-      margin: 0;
-      padding: 0;
-      overflow: hidden;
-      background: transparent;
-      color: white;
-      font-family: Arial, sans-serif;
-    }
-
-    #gps-overlay {
-      position: absolute;
-      top: 10px;
-      left: 10px;
-      background: rgba(0, 0, 0, 0.5);
-      padding: 10px;
-      border-radius: 5px;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Print Tag Example</title>
 </head>
 <body>
-  <span style='color: #20a0bb;'><% gps_coord(dms) %> | <% gps_alt(m) %>m</span>
-  <!-- GPS Overlay -->
-  <div id="gps-overlay">
-    Latitude: <span id="latitude">--</span>, Longitude: <span id="longitude">--</span>
-  </div>
-
-  <script>
-    function updateGPSOverlay() {
-      
-        // Call Larix's gps_coord function to get GPS coordinates
-        const gpsData = gps_coord(dd, 6); // Style 0: Decimal, Digits 6 for precision
-        const [latitude, longitude] = gpsData.split(","); // GPS data is returned as "latitude,longitude"
-
-        // Update the overlay with the fetched GPS coordinates
-        document.getElementById("latitude").textContent = latitude;
-        document.getElementById("latitude").textContent = document.getElementById("gps_data(dd)");
-        document.getElementById("longitude").textContent = longitude;
-    
-    }
-
-    // Update GPS coordinates periodically (every 1 second)
-    setInterval(updateGPSOverlay, 1000);
-  </script>
+    <p>gps_coord(dms)</p>
 </body>
 </html>
