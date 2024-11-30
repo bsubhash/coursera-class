@@ -3,25 +3,24 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Print Tag Value</title>
+    <title>Print GPS Coordinates</title>
 </head>
 <body>
-    <!-- Example of the system-provided tag -->
-    <gps_coord(dms) id="gps-data">40° 42' 46'' N, 74° 0' 21'' W</gps_coord(dms)>
-
+    <!-- Assume the gps_coord(dms) tag is already defined in the system and exists on the page -->
+    
     <!-- Placeholder to display the tag's value -->
     <p id="output"></p>
 
     <script>
-        // Select the tag and extract its content
+        // Access the gps_coord(dms) tag dynamically
         const gpsTag = document.querySelector('gps_coord(dms)');
         const output = document.getElementById('output');
 
         if (gpsTag) {
-            // Print the value of the tag
+            // Print the value of the tag dynamically
             output.textContent = `The GPS coordinates are: ${gpsTag.textContent}`;
         } else {
-            output.textContent = "GPS tag not found.";
+            output.textContent = "GPS tag not found on the page.";
         }
     </script>
 </body>
