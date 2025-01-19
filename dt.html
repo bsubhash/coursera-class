@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+body {
+  margin: 0; /* Reset default margin */
+  overflow: hidden; /* Hide scrollbars */
+  background-color: transparent; /* Make the body background transparent */
+}
+
+.overlay-container {
+  position: relative;
+  width: 100vw; /* Full viewport width */
+  height: 56.25vw; /* Maintain 16:9 aspect ratio */
+  max-height: 100vh; /* Prevent overflow on smaller screens */
+  max-width: 177.78vh; /* Prevent overflow on wider screens */
+  margin: auto; /* Center the container */
+}
+
+.datetime-overlay {
+  position: absolute;
+  bottom: 10px; /* Adjust as needed */
+  right: 10px; /* Adjust as needed */
+  font-family: 'Roboto Condensed', sans-serif; /* Match font style */
+  font-weight: bold;
+  font-size: 18px; /* Adjust as needed */
+  color: white;
+  /* Gradient background - only for the box */
+  background: linear-gradient(to bottom, rgba(255, 255, 255, 0) 0%, rgba(0, 0, 0, 0.4) 50%, rgba(0, 0, 0, 0.6) 100%);
+  padding: 5px 10px;
+}
+</style>
+<link href="https://fonts.googleapis.com/css2?family=Roboto+Condensed:wght@700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<div class="overlay-container">
+  <div class="datetime-overlay" id="datetime"></div>
+</div>
+
+<script>
+function updateDateTime() {
+  const now = new Date();
+  const formattedDate = now.toLocaleDateString('en-US', {
+    month: 'short',
+    day: 'numeric',
+    year: 'numeric'
+  });
+  const formattedTime = now.toLocaleTimeString('en-US', {
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit'
+  });
+
+  document.getElementById('datetime').textContent = `${formattedDate}, ${formattedTime}`;
+}
+
+updateDateTime(); // Initial update
+setInterval(updateDateTime, 1000); // Update every second
+</script>
+
+</body>
+</html>
