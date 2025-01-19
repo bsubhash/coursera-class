@@ -35,7 +35,7 @@ body {
 <script>
 function updateDateTime() {
   const now = new Date();
-  const timeString = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+  const timeString = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false }); // 24-hour format
   const dateString = now.toLocaleDateString([], { month: 'short', day: 'numeric', year: 'numeric' });
   
   document.getElementById('time').textContent = timeString;
