@@ -56,7 +56,8 @@ function updateDateTime() {
     second: '2-digit'
   });
 
-  document.getElementById('datetime').textContent = `${formattedDate}, ${formattedTime}`;
+  // **Crucial Change: Set text content with both date and time together**
+  document.getElementById('datetime').textContent = `${formattedDate} ${formattedTime}`;
 }
 
 updateDateTime(); // Initial update
