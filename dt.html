@@ -13,15 +13,25 @@ body {
 }
 
 .container {
-  color: rgb(153, 153, 255);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   padding: 5px 10px;
   font-size: 14px;
   position: fixed;
-  bottom: 50px; /* 50 pixels from the bottom */
-  right: 50px; /* 50 pixels from the right */
+  bottom: 2.3vh; /* 50px is approximately 2.3vh of a 1080p screen */
+  right: 2.3vw; /* 50px is approximately 2.3vw of a 1920p screen */
   font-weight: bold;
   background-color: rgba(128, 128, 128, 0.3);
   box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+#time {
+  color: rgb(153, 153, 255);
+}
+
+#date {
+  color: rgb(0, 0, 255);
 }
 </style>
 </head>
@@ -35,7 +45,7 @@ body {
 <script>
 function updateDateTime() {
   const now = new Date();
-  const timeString = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false }); // 24-hour format
+  const timeString = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false });
   const dateString = now.toLocaleDateString([], { month: 'short', day: 'numeric', year: 'numeric' });
   
   document.getElementById('time').textContent = timeString;
