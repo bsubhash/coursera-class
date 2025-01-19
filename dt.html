@@ -4,7 +4,7 @@
 <style>
 body {
   background-color: transparent;
-  font-family: monospace;
+  font-family: 'Roboto', sans-serif; /* Use Roboto font */
   position: relative;
   width: 100vw;
   height: 0;
@@ -27,14 +27,14 @@ body {
 }
 
 #time, #date {
-  color: rgb(10, 10, 225); /* Set both time and date to blue */
-  background: -webkit-linear-gradient(top, rgb(10, 10, 255), rgb(10, 10, 200)); /* Add a subtle gradient */
+  color: rgb(10, 10, 225);
+  background: -webkit-linear-gradient(top, rgb(10, 10, 255), rgb(10, 10, 200));
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
 
 #date {
-  margin-top: -5px; /* Reduce the gap between time and date */
+  margin-top: -5px;
 }
 </style>
 </head>
@@ -49,7 +49,7 @@ body {
 function updateDateTime() {
   const now = new Date();
   const timeString = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false });
-  const dateString = now.toLocaleDateString([], { month: 'long', day: 'numeric', year: 'numeric' }); // Use full month name
+  const dateString = now.toLocaleDateString([], { month: 'long', day: 'numeric', year: 'numeric' });
   
   document.getElementById('time').textContent = timeString;
   document.getElementById('date').textContent = dateString;
