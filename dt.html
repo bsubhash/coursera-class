@@ -3,66 +3,45 @@
 <head>
 <style>
 body {
-  margin: 0; /* Reset default margin */
-  overflow: hidden; /* Hide scrollbars */
-  background-color: transparent; /* Make the body background transparent */
+  background-color: transparent;
+  font-family: monospace;
+  position: relative; 
+  width: 100vw; 
+  height: 0; /* Height is set to 0 to allow padding-bottom to control it */
+  padding-bottom: 56.25%; /* 9/16 = 0.5625, then multiply by 100% */
+  overflow: hidden;
 }
 
-.overlay-container {
-  position: relative;
-  width: 100vw; /* Full viewport width */
-  height: 56.25vw; /* Maintain 16:9 aspect ratio */
-  max-height: 100vh; /* Prevent overflow on smaller screens */
-  max-width: 177.78vh; /* Prevent overflow on wider screens */
-  margin: auto; /* Center the container */
-}
-
-.datetime-overlay {
-  position: absolute;
-  bottom: 10px; /* Adjust as needed */
-  right: 10px; /* Adjust as needed */
-  font-family: 'Roboto Condensed', sans-serif; /* Match font style */
-  font-weight: bold;
-  font-size: 18px; /* Adjust as needed */
-  color: white;
-  /* Remove gradient from text */
-  /* -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-  background-image: linear-gradient(to bottom, #000080 0%, #191970 100%); */
-  /* Gradient background - only for the box */
-  background: linear-gradient(to bottom, rgba(255, 255, 255, 0) 0%, rgba(0, 0, 0, 0.4) 50%, rgba(0, 0, 0, 0.6) 100%);
+.container {
+  color: rgb(153, 153, 255);
   padding: 5px 10px;
+  font-size: 14px;
+  position: fixed; 
+  bottom: 0;
+  right: 0;
 }
 </style>
-<link href="https://fonts.googleapis.com/css2?family=Roboto+Condensed:wght@700&display=swap" rel="stylesheet">
 </head>
 <body>
 
-<div class="overlay-container">
-  <div class="datetime-overlay" id="datetime"></div>
+<div class="container">
+  <span id="time"></span><br>
+  <span id="date"></span>
 </div>
 
 <script>
 function updateDateTime() {
   const now = new Date();
-  const formattedDate = now.toLocaleDateString('en-US', {
-    month: 'short',
-    day: 'numeric',
-    year: 'numeric'
-  });
-  const formattedTime = now.toLocaleTimeString('en-US', {
-    hour: '2-digit',
-    minute: '2-digit',
-    second: '2-digit',
-    hour12: false
-  });
-
-  document.getElementById('datetime').textContent = `${formattedTime}\n${formattedDate}`;
+  const timeString = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+  const dateString = now.toLocaleDateString([], { month: 'short', day: 'numeric', year: 'numeric' });
+  
+  document.getElementById('time').textContent = timeString;
+  document.getElementById('date').textContent = dateString;
 }
 
-updateDateTime(); // Initial update
-setInterval(updateDateTime, 1000); // Update every second
+// Update initially and then every second
+updateDateTime();
+setInterval(updateDateTime, 1000); 
 </script>
 
 </body>
