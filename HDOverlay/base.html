@@ -17,9 +17,10 @@ body { margin: 0; }
   transform-origin: top left;
   transform: scale(1.9444);
   position: absolute;
-  top: 540px;
+  top: -765px; /* Adjusted top */
   left: 0;
-  background-color: transparent; /* Iframe element transparency */
+  background-color: transparent;
+  clip-path: inset(765px 0 0 0); /* Adjusted clip-path */
 }
 .logo {
   position: absolute;
