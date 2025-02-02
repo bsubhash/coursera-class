@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>CricClubs Overlay</title>
+<style>
+body { margin: 0; }
+#overlay {
+  position: relative;
+  width: 1920px;
+  height: 1080px;
+  overflow: hidden;
+  background-color: transparent;
+}
+
+#live-score {
+  width: 1400px; /* Target width */
+  height: 720px; /* 720p height */
+  position: absolute;
+  bottom: 0;
+  left: 260px; /* 1920 - 1400 = 520 / 2 = 260 */
+  clip-path: inset(360px 0 0 0); /* Clip the top half */
+    background-color: transparent;
+}
+
+iframe {
+    border: none;
+}
+
+</style>
+</head>
+<body>
+
+<div id="overlay">
+  <iframe id="live-score" src="https://cricclubs.com/live/CricClubsLive.do?fixtureId=3514&clubId=95"></iframe>
+</div>
+
+</body>
+</html>
