@@ -16,15 +16,17 @@
         }
 
 #live-score {
-            width: 1400px;
-            height: 1080px;
-            transform: scale(2);
-            transform-origin: 0 0;
-            border: none;
-            background: transparent;
-            position: absolute;
-            bottom : 0;
-            top: -1080px; /* Shift up to show the lower half of the page */
+  width: 1400px;          /* Original width */
+  height: 1080px;         /* Original height */
+  transform-origin: top left;    /* For scaling from top-left */
+  transform: scale(2);     /* Scale up by 2 */
+  border: none;
+  background: transparent;
+  position: absolute;
+  bottom: 0;             /* Align to bottom */
+  left: 50%;            /* Position left edge at horizontal center */
+  transform: translateX(-50%) scale(2); /* Shift left by half its width & scale */
+  clip-path: inset(540px 0 0 0); /* Clip to show lower half */
 }
 
         iframe {
