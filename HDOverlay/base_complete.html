@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>CricClubs Overlay</title>
+    <style>
+        body {
+            margin: 0;
+        }
+
+        #overlay {
+            position: relative;
+            width: 1920px;
+            height: 1080px;
+            overflow: hidden;
+            background-color: transparent;
+        }
+
+        #live-score {
+            width: 1400px;
+            height: 720px;
+            position: absolute;
+            bottom: 0;
+            left: 260px;
+            clip-path: inset(360px 0 0 0);
+            background-color: transparent;
+        }
+
+        iframe {
+            border: none;
+        }
+
+        .logo {
+            position: absolute;
+            background-size: contain;
+            background-repeat: no-repeat;
+        }
+
+        #logo1 {
+            top: 40px;
+            left: 75px;
+            width: 150px;
+            height: 100px;
+        }
+
+        #logo2 {
+            top: 40px;
+            right: 75px;
+            width: 150px;
+            height: 100px;
+        }
+
+        .image-cycle {
+            position: absolute;
+            width: 85px;
+            height: 190px;
+            background-size: contain;
+            background-repeat: no-repeat;
+        }
+
+        #image-cycle-left {
+            bottom: 0;
+            left: 0;
+        }
+
+        #image-cycle-right {
+            bottom: 0;
+            right: 0;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="overlay">
+        <iframe id="live-score" src=""></iframe>
+        <div id="logo1" class="logo"></div>
+        <div id="logo2" class="logo"></div>
+        <div id="image-cycle-left" class="image-cycle" data-images='["sdopen2025/lads/image1.jpg", "sdopen2025/lads/image2.png", "sdopen2025/lads/image3.gif"]'></div>
+        //<div id="image-cycle-right" class="image-cycle" data-images='["sdopen2025/rads/imageA.jpg", "sdopen2025/rads/imageB.jpeg"]'></div>
+    </div>
+
+    <script>// Static logo (top left)
+        document.getElementById("logo1").style.backgroundImage = "url('crickai_uhd2.png')";
+
+        // Dynamic logo (top right) - Replace 'my_images' with your actual folder name
+        const logo2 = document.getElementById("logo2");
+        logo2.style.backgroundImage = `url(sdopen2025/club.png)`;
+
+        function cycleImages(elementId) {
+            const imageCycle = document.getElementById(elementId);
+            const images = JSON.parse(imageCycle.dataset.images);
+
+            if (!images || images.length === 0) {
+                console.error("No images found in data attribute for:", elementId);
+                return;
+            }
+
+            let currentImageIndex = 0;
+            setInterval(() => {
+                imageCycle.style.backgroundImage = `url(${images[currentImageIndex]})`;
+                currentImageIndex = (currentImageIndex + 1) % images.length;
+            }, 10000);
+        }
+
+        cycleImages("image-cycle-left");
+        //cycleImages("image-cycle-right");
+
+        function updateCricClubsIframe() {
+            const iframe = document.getElementById("live-score");
+            const urlParams = new URLSearchParams(window.location.search);
+            const fixtureId = urlParams.get('fixtureId');
+            const matchId = urlParams.get('matchId');
+            const clubId = urlParams.get('clubId');
+
+            if ((fixtureId || matchId) && clubId) {
+                if (fixtureId) {
+                    iframe.src = `https://cricclubs.com/live/CricClubsLive.do?fixtureId=${fixtureId}&clubId=${clubId}`;
+                } else if (matchId) {
+                    iframe.src = `https://cricclubs.com/live/CricClubsLive.do?matchId=${matchId}&clubId=${clubId}`;
+                }
+            } else {
+                console.error("Missing fixtureId or matchId, or clubId URL parameters.");
+            }
+        }
+
+        updateCricClubsIframe();</script>
+
+</body>
+</html>
