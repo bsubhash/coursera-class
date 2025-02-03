@@ -15,15 +15,17 @@
             background-color: transparent;
         }
 
-        #live-score {
-            width: 2800px;
-            height: 1440px;
-            position: absolute;
-            bottom: 0;
-            left: 520px;
-            clip-path: inset(720px 0 0 0);
-            background-color: transparent;
-        }
+#live-score {
+    width: 1400px;  /* Half of 2800px */
+    height: 720px;  /* Half of 1440px */
+    position: absolute;
+    bottom: 0;
+    left: 520px;
+    transform-origin: top left; /* Ensure scaling starts from top-left */
+    transform: scale(2); /* Scale up by 2 */
+    clip-path: inset(720px 0 0 0);
+    background-color: transparent;
+}
 
         iframe {
             border: none;
