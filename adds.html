@@ -1,0 +1,100 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+  <title>Overlay</title>
+  <style>
+    body, html {
+      margin: 0;
+      height: 100%;
+      overflow: hidden; 
+    }
+
+    #overlay {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      background-color: transparent; 
+    }
+
+  .logo {
+      position: absolute;
+      background-size: cover; 
+      background-repeat: no-repeat;
+      max-width: 15%; 
+      max-height: 10%; 
+    }
+
+    #logo1 {
+      top: 2%; 
+      left: 2%;  
+    }
+
+    #logo2 {
+      top: 2%; 
+      right: 2%; 
+    }
+
+  .image-cycle {
+      position: absolute;
+      max-width: 20%; 
+      max-height: 10%; 
+      background-size: cover;
+      background-repeat: no-repeat;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    #image-cycle-left {
+      bottom: 2%; 
+      left: 2%;  
+    }
+
+    #image-cycle-right {
+      bottom: 2%; 
+      right: 2%; 
+    }
+  </style>
+</head>
+<body>
+
+  <div id="overlay">
+    <div id="logo1" class="logo"></div>
+    <div id="logo2" class="logo"></div>
+    <div id="image-cycle-left" class="image-cycle" data-images='["sdopen2025/lads/image1.png"]'></div>
+    <div id="image-cycle-right" class="image-cycle" data-images='["sdopen2025/rads/imageA.png", "sdopen2025/rads/imageB.png", "sdopen2025/rads/imageC.png", "sdopen2025/rads/imageD.png", "sdopen2025/rads/imageE.png", "sdopen2025/rads/imageF.png"]'></div>
+  </div>
+
+  <script defer>
+    document.addEventListener('DOMContentLoaded', (event) => {
+      // Set static logo (top left)
+      document.getElementById("logo1").style.backgroundImage = "url('crickai_uhd2.png')";
+
+      // Set dynamic logo (top right)
+      const logo2 = document.getElementById("logo2");
+      logo2.style.backgroundImage = `url(sdopen2025/club.png)`;
+
+      function cycleImages(elementId) {
+        const imageCycle = document.getElementById(elementId);
+        const images = JSON.parse(imageCycle.dataset.images);
+
+        if (!images || images.length === 0) {
+          console.error("No images found in data attribute for:", elementId);
+          return;
+        }
+
+        let currentImageIndex = 0;
+        setInterval(() => {
+          imageCycle.style.backgroundImage = `url(${images[currentImageIndex]})`;
+          currentImageIndex = (currentImageIndex + 1) % images.length;
+        }, 10000); 
+      }
+
+      // Start image cycling
+      cycleImages("image-cycle-left");
+      cycleImages("image-cycle-right");
+    });
+  </script>
+
+</body>
+</html>
