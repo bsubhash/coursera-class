@@ -1,0 +1,220 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+  <title>Dual Logo and Image Cycles</title>
+  <style>
+    body, html {
+      margin: 0;
+      height: 100%;
+      overflow: hidden;
+    }
+
+    #overlay {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      background-color: transparent;
+    }
+
+  .logo {
+      position: absolute;
+      background-size: contain;
+      background-repeat: no-repeat;
+      width: 150px;   /* Initial width for 1080p */
+      height: 100px;  /* Initial height for 1080p */
+    }
+
+    #logo1 {
+      top: 40px;  /* 40px from the top on 1080p */
+      left: 50px; /* 50px from the left on 1080p */
+    }
+
+    #logo2 {
+      top: 40px;  /* 40px from the top on 1080p */
+      right: 50px; /* 50px from the right on 1080p */
+    }
+
+  .image-cycle {
+      position: absolute;
+      bottom: 15px;
+      width: 195px;
+      height: 85px;
+      background-size: contain;
+      background-position: center;
+      background-repeat: no-repeat;
+      overflow: hidden;
+    }
+
+    #image-cycle-left {
+      left: 55px; 
+    }
+
+    #image-cycle-right {
+      right: 55px;
+    }
+
+  .image-cycle img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      transition: transform 0.5s ease-in-out; /* Reduced transition time */
+      position: absolute; 
+    }
+
+    #image-cycle-right img {
+      transform: translateX(-100%); 
+    }
+
+    #image-cycle-right img.active {
+      transform: translateX(0%); 
+    }
+
+    #image-cycle-right img.old {
+      transform: translateX(100%); 
+    }
+
+    /* Media queries for responsiveness */
+    @media (max-width: 1200px) {
+    .logo {
+        width: 100px; 
+        height: 67px; 
+      }
+      #logo1 {
+        top: 27px;  
+        left: 33px;  
+      }
+      #logo2 {
+        top: 27px;  
+        right: 33px;  
+      }
+    .image-cycle {
+        width: 130px;  
+        height: 57px; 
+        bottom: 10px; 
+      }
+      #image-cycle-left {
+        left: 37px;   
+      }
+      #image-cycle-right {
+        right: 37px;  
+      }
+    }
+
+    @media (min-width: 3840px) { 
+    .logo {
+        width: 300px; 
+        height: 200px; 
+      }
+      #logo1 {
+        top: 80px;  
+        left: 100px; 
+      }
+      #logo2 {
+        top: 80px; 
+        right: 100px; 
+      }
+    .image-cycle {
+        width: 390px;  
+        height: 170px; 
+        bottom: 30px; 
+      }
+      #image-cycle-left {
+        left: 110px;   
+      }
+      #image-cycle-right {
+        right: 110px;  
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div id="overlay">
+    <div id="logo1" class="logo"></div>
+    <div id="logo2" class="logo"></div>
+    <div id="image-cycle-left" class="image-cycle"></div> 
+    <div id="image-cycle-right" class="image-cycle"></div> 
+  </div>
+
+  <script defer>
+    document.addEventListener('DOMContentLoaded', (event) => {
+      document.getElementById("logo1").style.backgroundImage = "url('crickai_uhd2.png')";
+      document.getElementById("logo2").style.backgroundImage = "url('sdopen2025/club.png')"; 
+
+      const imageCycleLeft = document.getElementById("image-cycle-left");
+      const imageCycleRight = document.getElementById("image-cycle-right");
+      const imageFolderLeft = "sdopen2025/lads/";
+      const imageFolderRight = "sdopen2025/rads/";
+      const imagesLeft = [
+        "image1.png"
+      ];
+      const imagesRight = [
+        "imageA.png",
+        "imageB.png",
+        "imageC.png",
+        "imageD.png",
+        "imageE.png",
+        "imageF.png",
+        "imageG.png",
+        "imageH.png"
+      ];
+      let currentImageIndexLeft = 0;
+      let currentImageIndexRight = 0;
+
+      function addImageToCycle(container, imageUrl) {
+        const img = document.createElement('img');
+        img.src = imageUrl;
+        img.style.transform = 'translateX(-100%)'; // Start offscreen to the left
+        container.appendChild(img);
+        setTimeout(() => {
+          img.style.transform = 'translateX(0%)'; // Slide in
+        }, 10);
+      }
+
+      // Function to show a single image continuously
+      function showSingleImage(container, imageUrl) {
+        const img = document.createElement('img');
+        img.src = imageUrl;
+        container.appendChild(img);
+      }
+
+      setInterval(() => {
+        // Left image cycle (show single image if only one)
+        if (imagesLeft.length === 1) {
+          const imageUrlLeft = imageFolderLeft + imagesLeft;
+          showSingleImage(imageCycleLeft, imageUrlLeft);
+        } else if (imagesLeft.length > 1) {
+          const imageUrlLeft = imageFolderLeft + imagesLeft[currentImageIndexLeft];
+          addImageToCycle(imageCycleLeft, imageUrlLeft);
+          currentImageIndexLeft = (currentImageIndexLeft + 1) % imagesLeft.length;
+        }
+
+        // Right image cycle (slide animation)
+        const currentImageRight = imageCycleRight.querySelector('img');
+        const imageUrlRight = imageFolderRight + imagesRight[currentImageIndexRight];
+
+        if (currentImageRight) {
+          // Slide out the old image first
+          currentImageRight.classList.add('old');
+
+          // Add the new image after a short delay
+          setTimeout(() => {
+            addImageToCycle(imageCycleRight, imageUrlRight);
+            // Remove the old image after it has slid out
+            setTimeout(() => {
+              imageCycleRight.removeChild(currentImageRight);
+            }, 500); // Remove after the transition duration (0.5s)
+          }, 500); // Wait for the old image to slide out (0.5s)
+        } else {
+          // If there's no current image, just add the new one
+          addImageToCycle(imageCycleRight, imageUrlRight);
+        }
+
+        currentImageIndexRight = (currentImageIndexRight + 1) % imagesRight.length;
+
+      }, 10000); // Change image every 10 seconds
+    });
+  </script>
+
+</body>
+</html>
