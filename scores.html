@@ -1,0 +1,79 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title>CricClubs Overlay</title>
+    <style>
+        body {
+            margin: 0;
+        }
+
+        #overlay {
+            position: relative;
+            width: 1920px;
+            height: 1080px;
+            overflow: hidden;
+            background-color: transparent;
+        }
+
+        #live-score {
+            width: 1400px; /* Target width */
+            height: 720px; /* 720p height */
+            position: absolute;
+            bottom: 0;
+            left: 260px; /* 1920 - 1400 = 520 / 2 = 260 */
+            clip-path: inset(360px 0 0 0); /* Clip the top half */
+            background-color: transparent;
+        }
+
+        iframe {
+            border: none;
+        }
+
+        /* 4K resolution adjustments */
+        @media (min-width: 3840px) {
+            #overlay {
+                width: 3840px;
+                height: 2160px;
+            }
+
+            #live-score {
+                /* Keep original size for HD */
+                width: 1400px;
+                height: 720px;
+                left: 520px; /* (3840 - 2800) / 2 = 520 - to center horizontally after scaling */
+                clip-path: inset(360px 0 0 0); /* Original clip inset for HD */
+                /* Then scale up for 4K */
+                transform: scale(2);
+                transform-origin: bottom left; /* Scale from bottom left corner */
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="overlay">
+        <iframe id="live-score"></iframe>
+    </div>
+
+    <script>// Get URL parameters
+        const urlParams = new URLSearchParams(window.location.search);
+        const fixtureId = urlParams.get('fixtureId');
+        const clubId = urlParams.get('clubId');
+        const matchId = urlParams.get('matchId');
+
+        // Construct the iframe src based on available parameters
+        let iframeSrc = 'https://cricclubs.com/live/CricClubsLive.do?';
+        if (matchId) {
+            iframeSrc += `matchId=${matchId}&clubId=${clubId}`;
+        } else if (fixtureId) {
+            iframeSrc += `fixtureId=${fixtureId}&clubId=${clubId}`;
+        } else {
+            // Handle case where neither fixtureId nor matchId is provided
+            iframeSrc = 'about:blank'; // Or display an error message
+        }
+
+        // Set the iframe src
+        document.getElementById('live-score').src = iframeSrc;</script>
+
+</body>
+</html>
