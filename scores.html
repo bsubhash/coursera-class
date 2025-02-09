@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html>
 <head>
     <title>CricClubs Overlay</title>
@@ -16,12 +16,12 @@
         }
 
         #live-score {
-            width: 1400px; /* Target width */
-            height: 720px; /* 720p height */
+            width: 1400px;
+            height: 720px;
             position: absolute;
-            bottom: 0;
-            left: 260px; /* 1920 - 1400 = 520 / 2 = 260 */
-            clip-path: inset(360px 0 0 0); /* Clip the top half */
+            bottom: 10px; /* 10px margin from the bottom for HD */
+            left: 260px;
+            clip-path: inset(360px 0 0 0);
             background-color: transparent;
         }
 
@@ -37,14 +37,13 @@
             }
 
             #live-score {
-                /* Keep original size for HD */
                 width: 1400px;
                 height: 720px;
-                left: 520px; /* (3840 - 2800) / 2 = 520 - to center horizontally after scaling */
-                clip-path: inset(360px 0 0 0); /* Original clip inset for HD */
-                /* Then scale up for 4K */
+                left: 520px;
+                bottom: 20px; /* 20px margin from the bottom for 4K */
+                clip-path: inset(360px 0 0 0);
                 transform: scale(2);
-                transform-origin: bottom left; /* Scale from bottom left corner */
+                transform-origin: bottom left;
             }
         }
     </style>
@@ -68,8 +67,7 @@
         } else if (fixtureId) {
             iframeSrc += `fixtureId=${fixtureId}&clubId=${clubId}`;
         } else {
-            // Handle case where neither fixtureId nor matchId is provided
-            iframeSrc = 'about:blank'; // Or display an error message
+            iframeSrc = 'about:blank';
         }
 
         // Set the iframe src
