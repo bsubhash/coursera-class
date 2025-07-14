@@ -19,6 +19,26 @@
             font-family: Arial, sans-serif;
         }
 
+        /* Hidden iframe for ECB page */
+        .ecb-iframe-container {
+            position: absolute;
+            top: -1500px;
+            left: -500px;
+            width: 300px;
+            height: 1200px;
+            visibility: hidden;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .ecb-iframe {
+            width: 300px;
+            height: 1200px;
+            border: none;
+            background: white;
+            transform: scale(1);
+        }
+
         /* Bottom overlay strip - 1920x300 for the extracted 300px section */
         .bottom-overlay {
             position: fixed;
@@ -102,6 +122,17 @@
     </style>
 </head>
 <body>
+    <!-- Hidden ECB iframe for data extraction -->
+    <div class="ecb-iframe-container">
+        <iframe 
+            id="ecbFrame"
+            class="ecb-iframe" 
+            src="https://live.nvplay.com/ecb/?tab=m_scorecard#m1a1effdb-03da-413a-a8dc-e02c0870b9e6"
+            sandbox="allow-scripts allow-same-origin allow-forms"
+            loading="lazy">
+        </iframe>
+    </div>
+
     <!-- Debug info panel -->
     <div class="debug-info" id="debugInfo">
         <strong>HTML Section Extractor</strong><br>
@@ -144,6 +175,14 @@
         document.addEventListener('DOMContentLoaded', function() {
             initializeExtractor();
             startAutoUpdate();
+            
+            // Wait for ECB iframe to load
+            const iframe = document.getElementById('ecbFrame');
+            iframe.onload = function() {
+                updateStatus('ECB Page Loaded');
+                // Try to extract real content after page loads
+                setTimeout(attemptRealExtraction, 3000);
+            };
             
             // Hide debug after 15 seconds
             setTimeout(() => {
@@ -227,6 +266,81 @@
             ctx.strokeRect(0, 0, 300, 100);
         }
 
+        function attemptRealExtraction() {
+            const iframe = document.getElementById('ecbFrame');
+            
+            try {
+                // Try to access iframe content (will likely fail due to CORS)
+                const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+                
+                if (iframeDoc) {
+                    updateStatus('Accessing ECB Content');
+                    
+                    // Look for cricket scorecard elements
+                    const scoreElements = iframeDoc.querySelectorAll('*');
+                    updateStatus(`Found ${scoreElements.length} elements`);
+                    
+                    // Extract text content for analysis
+                    let cricketData = [];
+                    scoreElements.forEach(el => {
+                        const text = el.textContent?.trim();
+                        if (text && (text.includes('/') || text.includes('overs') || text.includes('runs'))) {
+                            cricketData.push(text);
+                        }
+                    });
+                    
+                    if (cricketData.length > 0) {
+                        renderRealExtraction(cricketData);
+                        updateStatus('Real Data Extracted');
+                    } else {
+                        simulateExtraction();
+                        updateStatus('No Cricket Data Found - Using Simulation');
+                    }
+                    
+                } else {
+                    throw new Error('Cannot access iframe content');
+                }
+                
+            } catch (error) {
+                console.log('CORS blocked or iframe not accessible:', error.message);
+                updateStatus('CORS Blocked - Using Simulation');
+                simulateExtraction();
+            }
+        }
+
+        function renderRealExtraction(cricketData) {
+            const canvas = document.getElementById('extractedCanvas');
+            const ctx = canvas.getContext('2d');
+            
+            // Clear canvas
+            ctx.clearRect(0, 0, 300, 100);
+            
+            // White background
+            ctx.fillStyle = '#ffffff';
+            ctx.fillRect(0, 0, 300, 100);
+            
+            // Header
+            ctx.fillStyle = '#1e40af';
+            ctx.font = 'bold 12px Arial';
+            ctx.fillText('LIVE ECB DATA EXTRACTED', 10, 15);
+            
+            // Display extracted cricket data
+            ctx.fillStyle = '#000000';
+            ctx.font = '11px Arial';
+            
+            let yPos = 30;
+            cricketData.slice(0, 6).forEach((data, index) => {
+                const displayText = data.substring(0, 35);
+                ctx.fillText(displayText, 10, yPos);
+                yPos += 12;
+            });
+            
+            // Border
+            ctx.strokeStyle = '#00ff00';
+            ctx.lineWidth = 2;
+            ctx.strokeRect(0, 0, 300, 100);
+        }
+
         function updateStatus(message) {
             document.getElementById('statusText').textContent = message;
         }
@@ -235,8 +349,6 @@
             const debugPanel = document.getElementById('debugInfo');
             debugPanel.classList.toggle('hidden');
         }
-
-        // Public API for real implementation
         window.extractorAPI = {
             
             // Function to extract from a real HTML element
