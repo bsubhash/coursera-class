@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Webpage Section Clipper</title>
+    <style>
+        /* The body must be transparent to act as an overlay in streaming software */
+        body, html {
+            margin: 0;
+            padding: 0;
+            width: 100vw;
+            height: 100vh;
+            overflow: hidden;
+            background-color: transparent;
+        }
+
+        /* * This is the "clipping mask" or "window".
+         * It's a 300x100 pixel box positioned at the bottom-left of the screen.
+         * 'overflow: hidden' is the key property that hides any part of the
+         * iframe that extends beyond this div's boundaries.
+        */
+        .clipper {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 300px;
+            height: 100px; /* The height of the section we want to show (400 - 300) */
+            overflow: hidden;
+            border: 2px solid red; /* Optional: for visualizing the clipped area. Remove for production. */
+        }
+
+        /* * This is the iframe that contains the target website.
+         * We position it absolutely within the '.clipper' div.
+         * By setting 'top: -300px', we shift the entire 1200px tall iframe
+         * upwards by 300 pixels. This makes the 300px-400px vertical
+         * section of the source page visible inside our 100px tall clipper.
+        */
+        .clipper iframe {
+            position: absolute;
+            top: -300px;
+            left: 0;
+            width: 300px;
+            height: 1200px;
+            border: 0;
+            /* This helps prevent the user from accidentally interacting with the iframe */
+            pointer-events: none; 
+        }
+    </style>
+</head>
+<body>
+    <!-- 
+      This div will contain and clip the iframe. 
+      The iframe inside will load the target webpage.
+    -->
+    <div class="clipper">
+        <iframe 
+            src="https://live.nvplay.com/ecb/?tab=m_scorecard#m1a1effdb-03da-413a-a8dc-e02c0870b9e6" 
+            scrolling="no"
+            title="Live Scorecard Source">
+        </iframe>
+    </div>
+
+</body>
+</html>
