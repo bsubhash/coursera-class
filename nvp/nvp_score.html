@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ECB Section Extractor</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #000;
+            color: white;
+            font-family: Arial, sans-serif;
+            overflow: hidden;
+        }
+
+        /* Main container */
+        .main-container {
+            position: relative;
+            width: 100vw;
+            height: 100vh;
+            background: #000;
+        }
+
+        /* ECB iframe container - 300x1200 */
+        .ecb-iframe-container {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            width: 300px;
+            height: 1200px;
+            border: 2px solid #333;
+            overflow: hidden;
+            z-index: 10;
+        }
+
+        .ecb-iframe {
+            width: 300px;
+            height: 1200px;
+            border: none;
+            transform-origin: top left;
+            background: white;
+        }
+
+        /* Canvas for capturing the section */
+        #captureCanvas {
+            display: none;
+        }
+
+        /* Extraction overlay - shows the 300-400px section */
+        .extraction-overlay {
+            position: absolute;
+            top: 320px; /* 300px + 20px offset */
+            left: 20px;
+            width: 300px;
+            height: 100px; /* 400-300 = 100px height */
+            border: 3px solid #ff0000;
+            background: rgba(255, 0, 0, 0.1);
+            pointer-events: none;
+            z-index: 20;
+        }
+
+        .extraction-label {
+            position: absolute;
+            top: -25px;
+            left: 0;
+            background: #ff0000;
+            color: white;
+            padding: 3px 8px;
+            font-size: 12px;
+            border-radius: 3px;
+        }
+
+        /* Bottom overlay - 1920x100 */
+        .bottom-overlay {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 1920px;
+            height: 100px;
+            background: linear-gradient(135deg, rgba(0, 0, 0, 0.95) 0%, rgba(30, 30, 30, 0.95) 100%);
+            border-top: 3px solid #ff0000;
+            z-index: 100;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Canvas for the extracted section - no scaling */
+        .extracted-section {
+            image-rendering: crisp-edges;
+            border: 1px solid #333;
+        }
+
+        /* Controls */
+        .controls {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .control-btn {
+            background: #333;
+            color: white;
+            border: 1px solid #666;
+            padding: 10px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background 0.3s;
+        }
+
+        .control-btn:hover {
+            background: #555;
+        }
+
+        .control-btn.active {
+            background: #ff0000;
+        }
+
+        /* Status display */
+        .status {
+            position: fixed;
+            bottom: 120px;
+            right: 20px;
+            background: rgba(0, 0, 0, 0.8);
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid #333;
+            font-family: monospace;
+            font-size: 12px;
+            z-index: 1001;
+        }
+
+        /* Info panel */
+        .info-panel {
+            position: fixed;
+            top: 20px;
+            left: 350px;
+            background: rgba(0, 0, 0, 0.8);
+            padding: 20px;
+            border-radius: 8px;
+            border: 1px solid #333;
+            max-width: 400px;
+            z-index: 15;
+        }
+
+        .info-title {
+            color: #ff0000;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        /* Scaling controls */
+        .scale-controls {
+            margin-top: 10px;
+        }
+
+        .scale-slider {
+            width: 200px;
+            margin: 5px 0;
+        }
+
+        /* Preview window */
+        .preview-window {
+            position: fixed;
+            bottom: 120px;
+            left: 20px;
+            width: 400px;
+            height: 200px;
+            background: rgba(0, 0, 0, 0.9);
+            border: 2px solid #333;
+            border-radius: 8px;
+            overflow: hidden;
+            z-index: 50;
+        }
+
+        .preview-canvas {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 1920px) {
+            .bottom-overlay {
+                width: 100vw;
+                transform: scale(0.8);
+                transform-origin: bottom left;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="main-container">
+        <!-- ECB iframe in 300x1200 -->
+        <div class="ecb-iframe-container">
+            <iframe 
+                id="ecbFrame"
+                class="ecb-iframe" 
+                src="https://live.nvplay.com/ecb/?tab=m_summary#m1a1effdb-03da-413a-a8dc-e02c0870b9e6"
+                sandbox="allow-scripts allow-same-origin allow-forms"
+                loading="lazy">
+            </iframe>
+        </div>
+
+        <!-- Extraction overlay showing 300-400px section -->
+        <div class="extraction-overlay">
+            <div class="extraction-label">Extracting: 300-400px</div>
+        </div>
+
+        <!-- Info Panel -->
+        <div class="info-panel">
+            <div class="info-title">ECB Section Extractor</div>
+            <p>• ECB page loaded in 300x1200 iframe</p>
+            <p>• Red box shows extraction area (Y: 300-400px)</p>
+            <p>• Extracted section displays in bottom overlay (1920x100)</p>
+            <p>• Use controls to adjust extraction parameters</p>
+            
+            <div class="scale-controls">
+                <label>Extraction Y-Start: <span id="yStartValue">300</span>px</label>
+                <input type="range" class="scale-slider" id="yStartSlider" min="0" max="1000" value="300">
+                
+                <label>Extraction Height: <span id="heightValue">100</span>px</label>
+                <input type="range" class="scale-slider" id="heightSlider" min="50" max="300" value="100">
+            </div>
+        </div>
+
+        <!-- Controls -->
+        <div class="controls">
+            <button class="control-btn" onclick="captureSection()">Capture Section</button>
+            <button class="control-btn" onclick="toggleAutoCapture()" id="autoBtn">Start Auto-Capture</button>
+            <button class="control-btn" onclick="refreshFrame()">Refresh Frame</button>
+            <button class="control-btn" onclick="toggleOverlay()" id="overlayBtn">Hide Overlay</button>
+            <button class="control-btn" onclick="downloadCapture()">Download Capture</button>
+        </div>
+
+        <!-- Status display -->
+        <div class="status">
+            <div>Status: <span id="statusText">Ready</span></div>
+            <div>Last Capture: <span id="lastCapture">None</span></div>
+            <div>Auto-Capture: <span id="autoStatus">Off</span></div>
+            <div>Overlay Size: 300x100px (No Scaling)</div>
+        </div>
+
+        <!-- Preview window -->
+        <div class="preview-window">
+            <canvas id="previewCanvas" class="preview-canvas" width="400" height="200"></canvas>
+        </div>
+
+        <!-- Bottom overlay - 1920x100 -->
+        <div class="bottom-overlay" id="bottomOverlay">
+            <canvas id="extractedCanvas" class="extracted-section" width="300" height="100"></canvas>
+        </div>
+    </div>
+
+    <!-- Hidden canvas for capture operations -->
+    <canvas id="captureCanvas" width="300" height="100"></canvas>
+
+    <script>
+        let autoCapture = false;
+        let autoCaptureInterval;
+        let overlayVisible = true;
+        let yStart = 300;
+        let extractHeight = 100;
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            setupEventListeners();
+            updateExtractionOverlay();
+            
+            // Wait for iframe to load before starting capture
+            const iframe = document.getElementById('ecbFrame');
+            iframe.onload = function() {
+                document.getElementById('statusText').textContent = 'Frame Loaded';
+                setTimeout(() => {
+                    captureSection();
+                }, 2000); // Give time for content to render
+            };
+        });
+
+        function setupEventListeners() {
+            const yStartSlider = document.getElementById('yStartSlider');
+            const heightSlider = document.getElementById('heightSlider');
+
+            yStartSlider.addEventListener('input', function() {
+                yStart = parseInt(this.value);
+                document.getElementById('yStartValue').textContent = yStart;
+                updateExtractionOverlay();
+            });
+
+            heightSlider.addEventListener('input', function() {
+                extractHeight = parseInt(this.value);
+                document.getElementById('heightValue').textContent = extractHeight;
+                updateExtractionOverlay();
+            });
+        }
+
+        function updateExtractionOverlay() {
+            const overlay = document.querySelector('.extraction-overlay');
+            overlay.style.top = (yStart + 20) + 'px';
+            overlay.style.height = extractHeight + 'px';
+            
+            const label = document.querySelector('.extraction-label');
+            label.textContent = `Extracting: ${yStart}-${yStart + extractHeight}px`;
+        }
+
+        async function captureSection() {
+            try {
+                document.getElementById('statusText').textContent = 'Capturing...';
+                
+                const iframe = document.getElementById('ecbFrame');
+                const captureCanvas = document.getElementById('captureCanvas');
+                const extractedCanvas = document.getElementById('extractedCanvas');
+                const previewCanvas = document.getElementById('previewCanvas');
+                
+                // Set canvas dimensions
+                captureCanvas.width = 300;
+                captureCanvas.height = extractHeight;
+                
+                const ctx = captureCanvas.getContext('2d');
+                const extractedCtx = extractedCanvas.getContext('2d');
+                const previewCtx = previewCanvas.getContext('2d');
+
+                // For demonstration, create a simulated capture
+                // In a real scenario, you'd need server-side rendering or browser automation
+                
+                // Create a gradient simulation of the extracted section
+                const gradient = ctx.createLinearGradient(0, 0, 300, 0);
+                gradient.addColorStop(0, '#1e40af');
+                gradient.addColorStop(0.5, '#3b82f6');
+                gradient.addColorStop(1, '#60a5fa');
+                
+                ctx.fillStyle = gradient;
+                ctx.fillRect(0, 0, 300, extractHeight);
+                
+                // Add some simulated scorecard elements
+                ctx.fillStyle = 'white';
+                ctx.font = 'bold 16px Arial';
+                ctx.fillText('Lancashire', 10, 25);
+                ctx.fillText('287/6', 200, 25);
+                
+                ctx.font = '12px Arial';
+                ctx.fillText('85.3 overs', 10, 45);
+                ctx.fillText('RR: 3.36', 10, 60);
+                
+                if (extractHeight > 80) {
+                    ctx.fillText('Somerset', 10, 85);
+                    ctx.fillText('332 & 78/2', 200, 85);
+                }
+
+                // Display extracted section in bottom overlay (300x100 - no scaling)
+                extractedCtx.clearRect(0, 0, 300, 100);
+                extractedCtx.drawImage(captureCanvas, 0, 0);
+                
+                // Update preview
+                previewCtx.clearRect(0, 0, 400, 200);
+                previewCtx.drawImage(captureCanvas, 0, 0, 300, extractHeight, 0, 0, 400, 200);
+
+                document.getElementById('statusText').textContent = 'Captured';
+                document.getElementById('lastCapture').textContent = new Date().toLocaleTimeString();
+                
+            } catch (error) {
+                console.error('Capture error:', error);
+                document.getElementById('statusText').textContent = 'Error: ' + error.message;
+            }
+        }
+
+        function toggleAutoCapture() {
+            const btn = document.getElementById('autoBtn');
+            const statusSpan = document.getElementById('autoStatus');
+            
+            autoCapture = !autoCapture;
+            
+            if (autoCapture) {
+                btn.textContent = 'Stop Auto-Capture';
+                btn.classList.add('active');
+                statusSpan.textContent = 'On (5s interval)';
+                
+                autoCaptureInterval = setInterval(captureSection, 5000);
+            } else {
+                btn.textContent = 'Start Auto-Capture';
+                btn.classList.remove('active');
+                statusSpan.textContent = 'Off';
+                
+                if (autoCaptureInterval) {
+                    clearInterval(autoCaptureInterval);
+                }
+            }
+        }
+
+        function refreshFrame() {
+            const iframe = document.getElementById('ecbFrame');
+            iframe.src = iframe.src;
+            document.getElementById('statusText').textContent = 'Refreshing Frame...';
+        }
+
+        function toggleOverlay() {
+            const overlay = document.getElementById('bottomOverlay');
+            const btn = document.getElementById('overlayBtn');
+            
+            overlayVisible = !overlayVisible;
+            
+            if (overlayVisible) {
+                overlay.style.display = 'block';
+                btn.textContent = 'Hide Overlay';
+            } else {
+                overlay.style.display = 'none';
+                btn.textContent = 'Show Overlay';
+            }
+        }
+
+        function downloadCapture() {
+            const canvas = document.getElementById('extractedCanvas');
+            const link = document.createElement('a');
+            link.download = `ecb-extract-${Date.now()}.png`;
+            link.href = canvas.toDataURL();
+            link.click();
+        }
+
+        // Simulated real-time updates
+        function simulateUpdates() {
+            // This would be replaced with actual data extraction from the ECB page
+            if (autoCapture) {
+                captureSection();
+            }
+        }
+
+        // Instructions for real implementation
+        console.log(`
+        ECB Section Extractor Instructions:
+        
+        1. The ECB page is loaded in a 300x1200 iframe
+        2. Red overlay shows the extraction area (adjustable)
+        3. Extracted section displays in 1920x100 bottom overlay
+        4. Use sliders to adjust extraction Y-position and height
+        
+        For real implementation:
+        - Replace simulated capture with actual page rendering
+        - Use html2canvas or similar library for client-side capture
+        - Or implement server-side rendering with Puppeteer
+        - Connect to ECB page's live data updates
+        
+        Current simulation shows scorecard-like content
+        Adjust extraction area using the sliders on the left
+        `);
+    </script>
+</body>
+</html>
