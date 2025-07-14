@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ECB Cricket Overlay - Bottom Bar Only</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: transparent;
+            overflow: hidden;
+            width: 1920px;
+            height: 1080px;
+        }
+
+        /* Hidden iframe for data extraction */
+        .hidden-iframe-container {
+            position: absolute;
+            top: -2000px;
+            left: -2000px;
+            width: 300px;
+            height: 1200px;
+            visibility: hidden;
+            pointer-events: none;
+        }
+
+        .ecb-iframe {
+            width: 300px;
+            height: 1200px;
+            border: none;
+            background: white;
+        }
+
+        /* Bottom overlay - 1920x100 */
+        .bottom-overlay {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 1920px;
+            height: 100px;
+            background: linear-gradient(135deg, rgba(0, 0, 0, 0.85) 0%, rgba(30, 30, 30, 0.85) 100%);
+            border-top: 3px solid #ff0000;
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(5px);
+        }
+
+        /* Canvas for the extracted section */
+        .extracted-section {
+            image-rendering: crisp-edges;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 4px;
+        }
+
+        /* Hidden canvas for capture operations */
+        #captureCanvas {
+            display: none;
+        }
+
+        /* Small control indicator (minimal) */
+        .status-indicator {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 10px;
+            font-family: monospace;
+            z-index: 1001;
+            border: 1px solid #333;
+        }
+
+        .live-dot {
+            display: inline-block;
+            width: 6px;
+            height: 6px;
+            background: #ff0000;
+            border-radius: 50%;
+            margin-right: 5px;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+
+        /* Transparent mode for OBS/streaming software */
+        body.transparent-mode {
+            background: transparent;
+        }
+
+        body.transparent-mode .bottom-overlay {
+            background: rgba(0, 0, 0, 0.9);
+            backdrop-filter: blur(10px);
+        }
+
+        body.transparent-mode .status-indicator {
+            display: none;
+        }
+    </style>
+</head>
+<body class="transparent-mode">
+    <!-- Hidden ECB iframe for data extraction -->
+    <div class="hidden-iframe-container">
+        <iframe 
+            id="ecbFrame"
+            class="ecb-iframe" 
+            src="https://live.nvplay.com/ecb/?tab=m_summary#m1a1effdb-03da-413a-a8dc-e02c0870b9e6"
+            sandbox="allow-scripts allow-same-origin allow-forms"
+            loading="lazy">
+        </iframe>
+    </div>
+
+    <!-- Status indicator (minimal) -->
+    <div class="status-indicator" id="statusIndicator">
+        <span class="live-dot"></span>
+        <span id="statusText">Loading...</span>
+    </div>
+
+    <!-- Bottom overlay - 1920x100 -->
+    <div class="bottom-overlay">
+        <canvas id="extractedCanvas" class="extracted-section" width="300" height="100"></canvas>
+    </div>
+
+    <!-- Hidden canvas for capture operations -->
+    <canvas id="captureCanvas" width="300" height="100"></canvas>
+
+    <script>
+        let extractionSettings = {
+            yStart: 300,
+            height: 100,
+            autoCapture: true,
+            interval: 5000
+        };
+
+        let autoCaptureInterval;
+
+        // Initialize when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            setupAutoCapture();
+            
+            // Wait for iframe to load
+            const iframe = document.getElementById('ecbFrame');
+            iframe.onload = function() {
+                updateStatus('Ready');
+                setTimeout(captureSection, 2000);
+            };
+
+            // Hide status indicator after 10 seconds
+            setTimeout(() => {
+                document.getElementById('statusIndicator').style.display = 'none';
+            }, 10000);
+        });
+
+        function setupAutoCapture() {
+            if (extractionSettings.autoCapture) {
+                autoCaptureInterval = setInterval(captureSection, extractionSettings.interval);
+                updateStatus('Auto-Capture ON');
+            }
+        }
+
+        async function captureSection() {
+            try {
+                const iframe = document.getElementById('ecbFrame');
+                const captureCanvas = document.getElementById('captureCanvas');
+                const extractedCanvas = document.getElementById('extractedCanvas');
+                
+                // Set canvas dimensions
+                captureCanvas.width = 300;
+                captureCanvas.height = extractionSettings.height;
+                
+                const ctx = captureCanvas.getContext('2d');
+                const extractedCtx = extractedCanvas.getContext('2d');
+
+                // Try to access iframe content (will fail due to CORS, but let's try)
+                try {
+                    const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+                    
+                    if (iframeDoc) {
+                        // Try to extract actual content from ECB page
+                        const teamElements = iframeDoc.querySelectorAll('[class*="team"], [class*="score"], .team-name, .score');
+                        const scoreElements = iframeDoc.querySelectorAll('[class*="score"], .runs, .wickets');
+                        
+                        updateStatus('Found ' + teamElements.length + ' elements');
+                        
+                        // Create white background
+                        ctx.fillStyle = 'white';
+                        ctx.fillRect(0, 0, 300, extractionSettings.height);
+                        
+                        // Try to render found elements
+                        ctx.fillStyle = '#000';
+                        ctx.font = '12px Arial';
+                        
+                        let yPos = 20;
+                        for (let i = 0; i < Math.min(teamElements.length, 6); i++) {
+                            const element = teamElements[i];
+                            if (element && element.textContent) {
+                                ctx.fillText(element.textContent.trim().substring(0, 30), 10, yPos);
+                                yPos += 15;
+                            }
+                        }
+                        
+                    } else {
+                        throw new Error('Cannot access iframe content due to CORS');
+                    }
+                    
+                } catch (corsError) {
+                    // Fallback: Show a message that we need the actual ECB page content
+                    ctx.fillStyle = '#f0f0f0';
+                    ctx.fillRect(0, 0, 300, extractionSettings.height);
+                    
+                    ctx.fillStyle = '#333';
+                    ctx.font = '12px Arial';
+                    ctx.fillText('ECB Page Loading...', 10, 20);
+                    ctx.fillText('Cross-origin access blocked', 10, 35);
+                    ctx.fillText('Need server-side capture or', 10, 50);
+                    ctx.fillText('browser extension for real data', 10, 65);
+                    
+                    if (extractionSettings.height > 80) {
+                        ctx.fillText('URL: nvplay.com/ecb', 10, 85);
+                    }
+                    
+                    updateStatus('CORS Blocked - Need Real Implementation');
+                }
+
+                // Copy to display canvas without scaling
+                extractedCtx.clearRect(0, 0, 300, 100);
+                extractedCtx.drawImage(captureCanvas, 0, 0);
+                
+            } catch (error) {
+                console.error('Capture error:', error);
+                updateStatus('Error: ' + error.message);
+            }
+        }
+
+        function updateStatus(status) {
+            const statusText = document.getElementById('statusText');
+            if (statusText) {
+                statusText.textContent = status;
+            }
+        }
+
+        // Configuration functions (can be called from console)
+        window.configureExtraction = function(yStart, height) {
+            extractionSettings.yStart = yStart || 300;
+            extractionSettings.height = height || 100;
+            captureSection();
+        };
+
+        window.toggleAutoCapture = function() {
+            extractionSettings.autoCapture = !extractionSettings.autoCapture;
+            
+            if (extractionSettings.autoCapture) {
+                setupAutoCapture();
+            } else {
+                if (autoCaptureInterval) {
+                    clearInterval(autoCaptureInterval);
+                }
+            }
+        };
+
+        window.setUpdateInterval = function(seconds) {
+            extractionSettings.interval = seconds * 1000;
+            if (extractionSettings.autoCapture) {
+                clearInterval(autoCaptureInterval);
+                setupAutoCapture();
+            }
+        };
+
+        // Manual capture function
+        window.capture = captureSection;
+
+        // Console instructions
+        console.log(`
+        ECB Cricket Overlay - Configuration:
+        
+        • configureExtraction(yStart, height) - Set extraction area
+        • toggleAutoCapture() - Turn auto-capture on/off  
+        • setUpdateInterval(seconds) - Set update frequency
+        • capture() - Manual capture
+        
+        Example: configureExtraction(250, 120)
+        
+        Default: Extracts pixels 300-400 from ECB page
+        Updates every 5 seconds automatically
+        `);
+    </script>
+</body>
+</html>
