@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>CricClubs Responsive Overlay</title>
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden; /* Prevents scrollbars */
+        }
+
+        /* The overlay now uses viewport units to fill any screen size */
+        #overlay {
+            position: relative;
+            width: 100vw;
+            height: 100vh;
+            background-color: transparent;
+        }
+
+        /* * All values are calculated based on their original size
+         * relative to a 1920x1080 screen.
+         * This makes them scale perfectly to any resolution.
+        */
+        #live-score {
+            position: absolute;
+            
+            /* Sizing based on 1920x1080 viewport */
+            width: 72.92vw;   /* (1400px / 1920px) * 100 */
+            height: 66.67vh;  /* (720px / 1080px) * 100 */
+
+            /* Positioning based on 1920x1080 viewport */
+            left: 13.54vw;    /* (260px / 1920px) * 100 */
+            bottom: 0.93vh;   /* (10px / 1080px) * 100 */
+            
+            /* * Clipping is now percentage-based.
+             * This clips the top 50% of the iframe element,
+             * which is what the original 360px did for a 720px tall element.
+            */
+            clip-path: inset(50% 0 0 0);
+            
+            background-color: transparent;
+        }
+
+        iframe {
+            border: none;
+            /* Ensure the iframe content scales to fill its container */
+            width: 100%;
+            height: 100%;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="overlay">
+        <iframe id="live-score"></iframe>
+    </div>
+
+    <script>
+        // This JavaScript does not need to be changed.
+        const urlParams = new URLSearchParams(window.location.search);
+        const fixtureId = urlParams.get('fixtureId');
+        const clubId = urlParams.get('clubId');
+        const matchId = urlParams.get('matchId');
+
+        let iframeSrc = 'https://cricclubs.com/live/CricClubsLive.do?';
+        if (matchId) {
+            iframeSrc += `matchId=${matchId}&clubId=${clubId}`;
+        } else if (fixtureId) {
+            iframeSrc += `fixtureId=${fixtureId}&clubId=${clubId}`;
+        } else {
+            iframeSrc = 'about:blank';
+        }
+
+        document.getElementById('live-score').src = iframeSrc;
+    </script>
+
+</body>
+</html>
