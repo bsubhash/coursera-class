@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>CricClubs Overlay (4K Only)</title>
+    <style>
+        body {
+            margin: 0;
+        }
+
+        /* The overlay is now permanently sized for 4K */
+        #overlay {
+            position: relative;
+            width: 3840px;
+            height: 2160px;
+            overflow: hidden;
+            background-color: transparent;
+        }
+
+        /* The live-score styles are now locked to the 4K settings */
+        #live-score {
+            width: 1400px;
+            height: 720px;
+            position: absolute;
+            left: 520px;
+            bottom: 20px; /* 20px margin from the bottom for 4K */
+            clip-path: inset(360px 0 0 0);
+            background-color: transparent;
+            transform: scale(2);
+            transform-origin: bottom left;
+        }
+
+        iframe {
+            border: none;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="overlay">
+        <iframe id="live-score"></iframe>
+    </div>
+
+    <script>
+        // Get URL parameters
+        const urlParams = new URLSearchParams(window.location.search);
+        const fixtureId = urlParams.get('fixtureId');
+        const clubId = urlParams.get('clubId');
+        const matchId = urlParams.get('matchId');
+
+        // Construct the iframe src based on available parameters
+        let iframeSrc = 'https://cricclubs.com/live/CricClubsLive.do?';
+        if (matchId) {
+            iframeSrc += `matchId=${matchId}&clubId=${clubId}`;
+        } else if (fixtureId) {
+            iframeSrc += `fixtureId=${fixtureId}&clubId=${clubId}`;
+        } else {
+            iframeSrc = 'about:blank';
+        }
+
+        // Set the iframe src
+        document.getElementById('live-score').src = iframeSrc;
+    </script>
+
+</body>
+</html>
