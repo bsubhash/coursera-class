@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>CricClubs Responsive Overlay (300px Fixed Height)</title>
+    <style>
+        /* 1. SHRINK THE RENDER CANVAS SIZE */
+        html, body {
+            /* Set the root elements to the exact dimensions of the visible content */
+            width: 72.92vw;
+            /* *** Set the height to a fixed 300 pixels *** */
+            height: 300px; 
+            
+            margin: 0;
+            position: relative; /* Crucial: Must be relative to allow absolute positioning inside */
+            overflow: hidden; 
+        }
+
+        /* 2. REPOSITION THE ENTIRE CANVAS (TESTING: Top-left corner position) */
+        #overlay {
+            position: absolute;
+            
+            /* Shifts the canvas right by the original amount (13.54vw).
+               Vertical position is set to 0 (top of the rendered canvas) for testing visibility. */
+            transform: translate(13.54vw, 0); 
+            
+            /* New dimensions for the overlay wrapper, which match html/body */
+            width: 100%; 
+            height: 100%; 
+            background-color: transparent;
+        }
+
+        /* 3. ADJUST IFRAME CONTAINER (Shift content up for clipping) */
+        #live-score {
+            position: absolute;
+            
+            /* Width remains 100% of the small canvas width */
+            width: 100%;    
+            
+            /* Height is 200% of the 300px container (600px total height) */
+            height: 200%; 
+
+            /* Positioning: Shift the iframe UP by 100% of the container height (300px)
+               This exposes the lower 300 pixels of the iframe content. */
+            left: 0;
+            top: -100%; 
+            
+            background-color: transparent;
+            /* REMOVE the clip-path property as it's no longer needed */
+        }
+
+        iframe {
+            border: none;
+            /* Ensure the iframe content scales to fill its container */
+            width: 100%;
+            height: 100%;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="overlay">
+        <iframe id="live-score"></iframe>
+    </div>
+
+    <script>
+        // This JavaScript does not need to be changed.
+        const urlParams = new URLSearchParams(window.location.search);
+        const fixtureId = urlParams.get('fixtureId');
+        const clubId = urlParams.get('clubId');
+        const matchId = urlParams.get('matchId');
+
+        let iframeSrc = 'https://cricclubs.com/live/CricClubsLive.do?';
+        if (matchId) {
+            iframeSrc += `matchId=${matchId}&clubId=${clubId}`;
+        } else if (fixtureId) {
+            iframeSrc += `fixtureId=${fixtureId}&clubId=${clubId}`;
+        } else {
+            iframeSrc = 'about:blank';
+        }
+
+        document.getElementById('live-score').src = iframeSrc;
+    </script>
+
+</body>
+</html>
