@@ -61,7 +61,7 @@
         const clubId = urlParams.get('clubId');
         const matchId = urlParams.get('matchId');
 
-        let iframeSrc = 'https://cricclubs.com/live/CricClubsLive.do?';
+        let iframeSrc = 'https://cricclubs.com/CricClubsLive.do?';
         if (matchId) {
             iframeSrc += `matchId=${matchId}&clubId=${clubId}`;
         } else if (fixtureId) {
