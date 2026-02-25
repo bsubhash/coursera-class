@@ -61,7 +61,7 @@
         const matchId = urlParams.get('matchId');
 
         // Construct the iframe src based on available parameters
-        let iframeSrc = 'https://cricclubs.com/live/CricClubsLive.do?';
+        let iframeSrc = 'https://cricclubs.com/CricClubsLive.do?';
         if (matchId) {
             iframeSrc += `matchId=${matchId}&clubId=${clubId}`;
         } else if (fixtureId) {
@@ -75,3 +75,4 @@
 
 </body>
 </html>
+
